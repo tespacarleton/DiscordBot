@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 
 // The token of your bot - https://discordapp.com/developers/applications/me
-const secret = "NDMwMjE2NzUzMTcyMTg1MDg5.DaNGGA.SJdesTJemakFSZATVIcyNvw8uK0";
+const secret = "Token";
 
 //Constants
 const adminList = ["137041823683182592"];
@@ -131,7 +131,7 @@ client.on("message", (message) => {
     	return
   	}
   	//Lists emotes on the server
-	if (message.content.startsWith(prefix + "listemojis")) {
+	if (message.content.startsWith(prefix + "emoteList")) {
   		const emojiList = message.guild.emojis.map(e=>e.toString()).join(" ");
   		message.channel.send(emojiList);
 	}
