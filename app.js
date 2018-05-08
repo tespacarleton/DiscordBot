@@ -2,7 +2,7 @@ const Discord = require(`discord.js`);
 const client = new Discord.Client();
 
 // The token of your bot - https://discordapp.com/developers/applications/me
-const token = `NDQzNDM3MTc3OTI2NDUxMjAw.DdNaqA.s7OTmePhCYWqivZmRpl1Ag0qDfk`;
+const token = `Token`;
 
 //Constants
 const adminList = [`137041823683182592`];
@@ -148,7 +148,9 @@ client.on(`message`, (message) => {
   }
   //Admin Only tools
   if (admin){
-    message.channel.send(`Admin Mode Enabled`);
+    if(devMode){
+      message.channel.send(`Admin premission granted!`);
+    }
     /*message.channel.send(command);*/
     //Make an announcement
     if(command === 'announce'){
@@ -162,6 +164,7 @@ client.on(`message`, (message) => {
       }else{
         message.channel.send(`The channel ID \`${channel}\` is not avalibale. Please check them channel ID`)
       }
+      return;
     }
     //Channel Commands
     if(command === 'channel'){
@@ -175,29 +178,59 @@ client.on(`message`, (message) => {
         message.channel.send(`**The following channels shortcuts are avalibale: ** `);
       }else{
         message.channel.send(`**Info for** ${message.channel}`);
-        message.channel.send(`**ID:** ${message.channel.id}`);        
+        message.channel.send(`**ID:** ${message.channel.id}`); 
       }
+      return;       
     }
     //Lists emotes on the server
     if (command === `emoteList`) {
       const emojiList = message.guild.emojis.map(e=>e.toString()).join(` `);
       message.channel.send(emojiList);
+      return;
     }
-  }
+    if (command == `devmode`){
+      if(devMode){
+        message.channel.send(`Disabling DevMode. Who needs all those nerdy stats anyways.`);
+        devMode = false;
+      }else{
+        message.channel.send(`Enabling DevMode. Do your best!`);
+        devMode = true;
+      }
+      return;
+      }
+    if (command == `cleanmode`){
+      if(cleanMode){
+        message.channel.send(`Disabling CleanMode. Back to normal.`);
+        cleanMode = false;
+      }else{
+        message.channel.send(`Enabling CleanMode. Working in secret I see.`);
+        cleanMode = true;
+      }
+      return;
+      }
+    }
   //Moderator Only tools
   if (mod){
-    message.channel.send(`Moderator Mode Enabled`);
+    if(devmode){
+      message.channel.send(`Moderator speaking - everyone better listen up!`);
+    }
   }
+
+  if(command == 'avatar'){
+        message.reply(message.author.avatarURL);
+        return;
+  }
+
   if(command == 'role'){
     if (args.length < 1 || args[0] == `--help`) {
-        message.channel.send(`**These are game roles you're allowed to join:** \n ${roleList} \nUse \`!role <role_name>\` to join a role`)
-        return
+        message.channel.send(`**These are game roles you're allowed to join:** \n ${roleList} \nUse \`!role <role_name>\` to join a role \nUse \`!rmrole <role_name>\` to leave a role`)
+        return;
     }
 
     let role = message.guild.roles.find(`name`, args.join(' '));
     if (GAME_ROLES.indexOf(args.join(' ')) === -1){
-      message.channel.send(`Doesn't look like you're allowed to join ${args.join(' ')}. \nFor a list of allowed roles type \`!role --help\``)
-      return
+      message.channel.send(`Doesn't look like you're allowed to join ${args.join(' ')}.\nFor a full list of joinable roles use \`!role --help\` \nUse \`!role <role_name>\` to join a role \nUse \`!rmrole <role_name>\` to leave a role`)
+      return;
     }
       message.member.addRole(role).catch(console.error);
       //Hack for Smash
@@ -205,8 +238,24 @@ client.on(`message`, (message) => {
         message.member.addRole(`Smash`).catch(console.error);
       }
 
-      message.channel.send(`You've been added to: ` + args.join(' '));
+      message.channel.send(`You've been added to: ${args.join(' ') }!` );
+      return
   }
+  if(command == 'rmrole'){
+    let role = message.guild.roles.find(`name`, args.join(' '));
+    if (role){
+      message.member.removeRole(role).catch(console.error);
+      message.channel.send(`Yor are no longer a member of: ${args.join(' ') }... \n Sorry to see you go` );
+      return
+    }
+    message.channel.send(`I can't find the role${args.join(' ')}.\nAre you sure that is the name of the role you want to remove?\nUse \`!role <role_name>\` to join a role \nUse \`!rmrole <role_name>\` to leave a role`)
+    return
+  }
+  if(command == 'hello'){
+    message.reply("oh hello there. I'm Tessa and I help out here in the Tespa Carleton Discord. Let me know if you need anything!");
+    return;
+  }
+    message.channel.send(`English Please! I have no idea what the command \`${command}\` is for.  `)
 });
 
 client.on(`error`, e => { console.error(e) })
