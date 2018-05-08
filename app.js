@@ -55,7 +55,7 @@ client.on("message", (message) => {
    	/*
    	var myobj = {
 
-   		name: message.author.username, 
+   		name: message.author.username,
    		content: message.content
    	};*/
    	//Database Stuff for nerds
@@ -72,7 +72,7 @@ client.on("message", (message) => {
 			channelID: message.channel.id,
 			channelName: message.channel.name,
 		},
-		author: 
+		author:
 		{
 			username: message.author.username,
 			id: message.author.id,
@@ -80,7 +80,7 @@ client.on("message", (message) => {
 		},
 		message: message.content,
 		timestamp: message.createdTimestamp
-		};	
+		};
 	database.insert("messages", myobj);
 	}
 
@@ -138,5 +138,12 @@ client.on("message", (message) => {
 });
 
 client.on('error', e => { console.error(e) })
+
+client.on('guildMemberAdd',member=>{
+  member.send(`Welcome to the Tespa Carleton's Discord server!
+  Please read the rules in the Welcome channel, set your server Discord tag to: "[School Acronym] name" and introduce yourself in the Introductions channel!
+  If you have any questions, please do not hesitate and DM an Executive or Council member!`
+
+});
 
 client.login(secret);
