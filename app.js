@@ -189,52 +189,24 @@ client.on(`message`, (message) => {
     message.channel.send(`Moderator Mode Enabled`);
   }
   if(command == 'role'){
-    if (args.length < 2 || args[1] == `--help`) {
+    if (args.length < 1 || args[0] == `--help`) {
         message.channel.send(`**These are game roles you're allowed to join:** \n ${roleList} \nUse \`!role <role_name>\` to join a role`)
         return
     }
-  }/*
-		if (message.content.startsWith(prefix + `role`)) {
-		  const args = message.content.slice(prefix.length).trim().split(/ +/g);
-      const command = args.shift().toLowerCase();
-			
 
-		// Get the role
-    	let role = message.guild.roles.find(`name`, args[1]);
+    let role = message.guild.roles.find(`name`, args.join(' '));
+    if (GAME_ROLES.indexOf(args.join(' ')) === -1){
+      message.channel.send(`Doesn't look like you're allowed to join ${args.join(' ')}. \nFor a list of allowed roles type \`!role --help\``)
+      return
+    }
+      message.member.addRole(role).catch(console.error);
+      //Hack for Smash
+      if(args[0] === `Smash4` || args[0] === `Melee`){
+        message.member.addRole(`Smash`).catch(console.error);
+      }
 
-    	//Hack for role with space in it (Not Working Currently)
-    	if(role === `Fire`){
-    		role = `Fire Emblem`;
-    	}
-    	if(role === `Rocket`){
-    		role = `Rocket League`;
-    	}
-    	if(role === `Rainbow`){
-    		role = `Rainbow Six Siege`;
-    	}
-    	if(role === `League`){
-    		role = `League of Legends`;
-    	}
-
-    	if (!role || role === null) {
-    		message.channel.send(`Could not find a role by that name.`)
-     		return
-    	}
-
-   		if (roleList.indexOf(role.name) === -1) {
-      	message.channel.send(`Doesn't look like you're allowed to join that group. \nFor a list of allowed roles type \`!role --help\``)
-     		return
-   		}
-
-    	message.member.addRole(role).catch(console.error);
-    	//Hack for Smash
-    	if(role === `Smash4` || role === `Melee`){
-    		message.member.addRole(`Smash`).catch(console.error);
-    	}
-
-    	message.channel.send(`You've been added to: ` + role.name)
-    	return
-  	}*/
+      message.channel.send(`You've been added to: ` + args.join(' '));
+  }
 });
 
 client.on(`error`, e => { console.error(e) })
