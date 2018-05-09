@@ -16,12 +16,13 @@ var cleanMode = true;
 var moderatorList = [];
 var GAME_ROLES = [`Starcraft`, `Destiny`, `WoW`, `Rocket League`, `Hearthstone`, `Smash4`, `Melee`, `Smash`,`Overwatch`, `CS:GO`, `Smite`, `Fire Emblem`, `Paladins`, `Pokemon`, `Runescape`, `Tabletop`, `PUBG`, `Rainbow Six Siege`, `DotA`, `HOTS`, `League of Legends`, `Fortnite`]
 var MEMBER_COMMANDS = [`!role`, `!unrole`, `!avatar`];
-var ADMIN_COMMANDS = [`!announcement`, `!cleanmode`, `!channel`, `channel introductions`, '!channel list', `!channel rules`, 'channel update', `!devmode`, `!emotelist`];
+var ADMIN_COMMANDS = [`!announcement`, `!cleanmode`,`!channel`, `channel introductions`, '!channel list', `!channel rules`, 'channel update', `!devmode`, `!emotelist`, `!welcomeImage`];
 var MOD_COMMANDS = [``];
 var logChannel = ``;
 var channelList = {};
-var Introductions = '#introductions';
-var Rules = "#welcome";
+var introductions = '#introductions';
+var rules = "#welcome";
+var welcomeImage = "https://cdn.discordapp.com/attachments/443848163724623893/443857040683696139/RedditLink.png";
 
 //Helpers
 function remove(array, element) {
@@ -257,6 +258,10 @@ client.on(`message`, (message) => {
       }
       return;
       }
+      if(command === 'welcomeImage'){
+        welcomeImage = args[0];
+        message.channel.send(`Changed Welcome image to ${welcomeImage}.`);
+      }
       if(command == `admin`){
       message.channel.send(`Here are some things I can help you with as an admin: \n${adminCommandList}`);
       return
@@ -318,9 +323,9 @@ client.on(`message`, (message) => {
 client.on(`error`, e => { console.error(e) })
 
 client.on(`guildMemberAdd`,member=>{
-  member.send(" ", {files: ["https://cdn.discordapp.com/attachments/443848163724623893/443857040683696139/RedditLink.png"]}).catch(console.error);
+  member.send(" ", {files: [welcomeImage]}).catch(console.error);
   setTimeout(function(){
-    member.send(`Welcome to the Tespa Carleton Discord Server!\nPlease read the rules in the ${rules} channel and  then introduce yourself in the ${introductions} channel.\nIf you have any questions, do not hesitate to send a direct message to an Executive or Council member!`);
+    member.send(`Welcome to the Tespa Carleton Discord Server!\nPlease read the rules in ${rules} and  then introduce yourself in ${introductions}.\nIf you have any questions, do not hesitate to send a direct message to an Executive or Council member!`);
     }, 1000);
 });
 
