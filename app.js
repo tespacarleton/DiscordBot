@@ -1,20 +1,23 @@
 const Discord = require(`discord.js`);
 const client = new Discord.Client();
-
 // The token of your bot - https://discordapp.com/developers/applications/me
-const token = `Token`;
+const token = `NDQzODIwMDA3MzgyNzEyMzIw.DdS9fg.b3NVX2h5zNRKlZ5nEP8hIUHlH9A`;
 
 //Constants
 const adminList = [`137041823683182592`];
 //Local
 var database = require(`./database.js`);
+var generator = require(`./generator.js`);
 //Flag
-var devMode = true;
+var devMode = false;
 var enableDB = false;
-var cleanMode = false;
+var cleanMode = true;
 //Admin IDs
 var moderatorList = [];
 var GAME_ROLES = [`Starcraft`, `Destiny`, `WoW`, `Rocket League`, `Hearthstone`, `Smash4`, `Melee`, `Smash`,`Overwatch`, `CS:GO`, `Smite`, `Fire Emblem`, `Paladins`, `Pokemon`, `Runescape`, `Tabletop`, `PUBG`, `Rainbow Six Siege`, `DotA`, `HOTS`, `League of Legends`, `Fortnite`]
+var MEMBER_COMMANDS = [`!role`, `!unrole`, `!avatar`];
+var ADMIN_COMMANDS = [`!announcement`, `!cleanmode`, `!channel`, `!channel update`, '!channel list', `!devmode`, `!emotelist`];
+var MOD_COMMANDS = [``];
 var logChannel = ``;
 var channelList = {};
 
@@ -57,11 +60,30 @@ var contains = function(needle) {
     return indexOf.call(this, needle) > -1;
 };
 
-// Role List
 let roleList = ``;
+var commandList = ``;
+var adminCommandList = ``;
+var modCommandList = ``;
+
+
+function fillLists(){
+// Role List
 GAME_ROLES.forEach((role) => {
-  roleList = roleList.concat(`- ` + role + `\n`);
+  roleList = roleList.concat(`- ${role}\n`);
 });
+//Command Lists
+MEMBER_COMMANDS.forEach((role) => {
+  commandList = commandList.concat(`- \`${role}\`\n`);
+});
+//Admin Lists
+ADMIN_COMMANDS.forEach((role) => {
+  adminCommandList = adminCommandList.concat(`- \`${role}\`\n`);
+});
+//Mod Lists
+MOD_COMMANDS.forEach((role) => {
+  modCommandList = modCommandList.concat(`- \`${role}\`\n`);
+});
+};
 
 client.on(`ready`, () => {
   console.log(`I am ready!`);
@@ -74,6 +96,7 @@ client.on(`ready`, () => {
   if(cleanMode){
     console.log('cleanMode Enabled');
   }
+  fillLists();
 });
 
 client.on(`message`, (message) => {
@@ -153,14 +176,26 @@ client.on(`message`, (message) => {
     }
     /*message.channel.send(command);*/
     //Make an announcement
-    if(command === 'announce'){
+    if(command === 'announcement'){
       var channel = args.shift();
       if (channelList[channel]){
         message.channel.send(`**Channel ID: ** ${channelList[channel]}`);
         channel = channelList[channel];
       }
       if(client.channels.get(channel)){
-        client.channels.get(channel).send(args.join(" "));
+        //Images
+        var delay = 0;
+        //Broken with cleanMode #BUG #TODO
+        for (var [snowflake, attachment] of message.attachments) {
+          delay++;
+          client.channels.get(channel).send(" ", {files: [attachment.url]}).catch(console.error);
+        }
+        //Message
+        if(args[0]){
+          setTimeout(function(){
+            client.channels.get(channel).send(args.join(" ")).catch(console.error);
+          }, 1000*delay);
+        }
       }else{
         message.channel.send(`The channel ID \`${channel}\` is not avalibale. Please check them channel ID`)
       }
@@ -171,11 +206,15 @@ client.on(`message`, (message) => {
       //Updates Channel info on bot
       if(args[0]==='update'){
         channelList[message.channel.name] = message.channel.id;
-        message.channel.send(`**Updated** ${message.channel} -> ${channelList[message.channel.name]}`);
+        if(cleanMode){
+          message.author.send(`**Updated** ${message.channel} -> ${channelList[message.channel.name]}`);
+        }else{
+          message.channel.send(`**Updated** ${message.channel} -> ${channelList[message.channel.name]}`);
+        }
       //Lists channels with shortcuts
       }else if(args[0]==='list'){
         //TODO
-        message.channel.send(`**The following channels shortcuts are avalibale: ** `);
+        message.channel.send(`**The following channels shortcuts are avalibale: **Currently Bugged #TODO** `);
       }else{
         message.channel.send(`**Info for** ${message.channel}`);
         message.channel.send(`**ID:** ${message.channel.id}`); 
@@ -183,7 +222,7 @@ client.on(`message`, (message) => {
       return;       
     }
     //Lists emotes on the server
-    if (command === `emoteList`) {
+    if (command === `emotelist`) {
       const emojiList = message.guild.emojis.map(e=>e.toString()).join(` `);
       message.channel.send(emojiList);
       return;
@@ -208,6 +247,10 @@ client.on(`message`, (message) => {
       }
       return;
       }
+      if(command == `admin`){
+      message.channel.send(`Here are some things I can help you with as an admin: \n${adminCommandList}`);
+      return
+      }
     }
   //Moderator Only tools
   if (mod){
@@ -217,13 +260,13 @@ client.on(`message`, (message) => {
   }
 
   if(command == 'avatar'){
-        message.reply(message.author.avatarURL);
+        message.reply(`here is the link ${message.author.displayAvatarURL}`);
         return;
   }
 
   if(command == 'role'){
     if (args.length < 1 || args[0] == `--help`) {
-        message.channel.send(`**These are game roles you're allowed to join:** \n ${roleList} \nUse \`!role <role_name>\` to join a role \nUse \`!rmrole <role_name>\` to leave a role`)
+        message.channel.send(`**These are game roles you're allowed to join:** \n${roleList} \nUse \`!role <role_name>\` to join a role \nUse \`!rmrole <role_name>\` to leave a role`)
         return;
     }
 
@@ -245,23 +288,27 @@ client.on(`message`, (message) => {
     let role = message.guild.roles.find(`name`, args.join(' '));
     if (role){
       message.member.removeRole(role).catch(console.error);
-      message.channel.send(`Yor are no longer a member of: ${args.join(' ') }... \n Sorry to see you go` );
+      message.channel.send(`Yor are no longer a member of: ${args.join(' ') }... \nSorry to see you go` );
       return
     }
     message.channel.send(`I can't find the role${args.join(' ')}.\nAre you sure that is the name of the role you want to remove?\nUse \`!role <role_name>\` to join a role \nUse \`!rmrole <role_name>\` to leave a role`)
     return
   }
-  if(command == 'hello'){
-    message.reply("oh hello there. I'm Tessa and I help out here in the Tespa Carleton Discord. Let me know if you need anything!");
+  if(command ==  `help`){
+    message.channel.send(`Here are some things I can help you with: \n${commandList}`);
     return;
   }
-    message.channel.send(`English Please! I have no idea what the command \`${command}\` is for.  `)
+  if(command == 'hello'){
+    message.reply(`${generator.message(`Greeting`,command)}`)
+    return;
+  }
+    message.channel.send(`${generator.message(`Command Not Found`,command)}`)
 });
 
 client.on(`error`, e => { console.error(e) })
 
 client.on(`guildMemberAdd`,member=>{
-  member.send(`Welcome to the Tespa Carleton's Discord server!`);
+  member.send(`Hello to the Tespa Carleton's Discord server!`);
   member.send(`Please read the rules in the #welcome channel and introduce yourself in the #introductions channel`);
   member.send(`If you have any questions, please do not hesitate and DM an Executive or Council member!`);
 });
