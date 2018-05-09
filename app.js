@@ -320,7 +320,7 @@ client.on(`error`, e => { console.error(e) })
 client.on(`guildMemberAdd`,member=>{
   member.send(" ", {files: ["https://cdn.discordapp.com/attachments/443848163724623893/443857040683696139/RedditLink.png"]}).catch(console.error);
   setTimeout(function(){
-    member.send(`Welcome to the Tespa Carleton Discord server!\nPlease read the rules in the ${rules} channel and introduce yourself in the ${introductions} channel.\nIf you have any questions, please do not hesitate and DM an Executive or Council member!`);
+    member.send(`Welcome to the Tespa Carleton Discord Server!\nPlease read the rules in the ${rules} channel and  then introduce yourself in the ${introductions} channel.\nIf you have any questions, do not hesitate to send a direct message to an Executive or Council member!`);
     }, 1000);
 });
 
