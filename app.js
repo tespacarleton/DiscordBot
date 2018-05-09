@@ -1,7 +1,7 @@
 const Discord = require(`discord.js`);
 const client = new Discord.Client();
 // The token of your bot - https://discordapp.com/developers/applications/me
-const token = `NDQzODIwMDA3MzgyNzEyMzIw.DdS9fg.b3NVX2h5zNRKlZ5nEP8hIUHlH9A`;
+const token = `Token`;
 
 //Constants
 const adminList = [`137041823683182592`];
