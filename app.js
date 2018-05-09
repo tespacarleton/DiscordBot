@@ -16,10 +16,13 @@ var cleanMode = true;
 var moderatorList = [];
 var GAME_ROLES = [`Starcraft`, `Destiny`, `WoW`, `Rocket League`, `Hearthstone`, `Smash4`, `Melee`, `Smash`,`Overwatch`, `CS:GO`, `Smite`, `Fire Emblem`, `Paladins`, `Pokemon`, `Runescape`, `Tabletop`, `PUBG`, `Rainbow Six Siege`, `DotA`, `HOTS`, `League of Legends`, `Fortnite`]
 var MEMBER_COMMANDS = [`!role`, `!unrole`, `!avatar`];
-var ADMIN_COMMANDS = [`!announcement`, `!cleanmode`, `!channel`, `!channel update`, '!channel list', `!devmode`, `!emotelist`];
+var ADMIN_COMMANDS = [`!announcement`, `!cleanmode`,`!channel`, `channel introductions`, '!channel list', `!channel rules`, 'channel update', `!devmode`, `!emotelist`, `!welcomeImage`];
 var MOD_COMMANDS = [``];
 var logChannel = ``;
 var channelList = {};
+var introductions = '#introductions';
+var rules = "#welcome";
+var welcomeImage = "https://cdn.discordapp.com/attachments/443848163724623893/443857040683696139/RedditLink.png";
 
 //Helpers
 function remove(array, element) {
@@ -215,6 +218,14 @@ client.on(`message`, (message) => {
       }else if(args[0]==='list'){
         //TODO
         message.channel.send(`**The following channels shortcuts are avalibale: **Currently Bugged #TODO** `);
+      }else if(args[0]==='rules'){
+        rules = message.channel;
+        message.author.send(`**Updated** ${message.channel} -> Rules Channel}`);
+        message.delete();
+      }else if(args[0]==='introductions'){
+        introductions = message.channel;
+        message.author.send(`**Updated** ${message.channel} -> Introductions Channel}`);
+        message.delete();
       }else{
         message.channel.send(`**Info for** ${message.channel}`);
         message.channel.send(`**ID:** ${message.channel.id}`); 
@@ -246,6 +257,10 @@ client.on(`message`, (message) => {
         cleanMode = true;
       }
       return;
+      }
+      if(command === 'welcomeImage'){
+        welcomeImage = args[0];
+        message.channel.send(`Changed Welcome image to ${welcomeImage}.`);
       }
       if(command == `admin`){
       message.channel.send(`Here are some things I can help you with as an admin: \n${adminCommandList}`);
@@ -308,9 +323,10 @@ client.on(`message`, (message) => {
 client.on(`error`, e => { console.error(e) })
 
 client.on(`guildMemberAdd`,member=>{
-  member.send(`Hello to the Tespa Carleton's Discord server!`);
-  member.send(`Please read the rules in the #welcome channel and introduce yourself in the #introductions channel`);
-  member.send(`If you have any questions, please do not hesitate and DM an Executive or Council member!`);
+  member.send(" ", {files: [welcomeImage]}).catch(console.error);
+  setTimeout(function(){
+    member.send(`Welcome to the Tespa Carleton Discord Server!\nPlease read the rules in ${rules} and  then introduce yourself in ${introductions}.\nIf you have any questions, do not hesitate to send a direct message to an Executive or Council member!`);
+    }, 1000);
 });
 
 client.login(token);
