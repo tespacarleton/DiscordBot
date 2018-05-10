@@ -1,7 +1,7 @@
 const Discord = require(`discord.js`);
 const client = new Discord.Client();
 // The token of your bot - https://discordapp.com/developers/applications/me
-const token = `Token`;
+const token = `NDQzODIwMDA3MzgyNzEyMzIw.DdTunQ.uM-_YX24vd4qQrldr31JCVA-QDA`;
 
 //Constants
 const adminList = [`137041823683182592`];
@@ -11,13 +11,13 @@ var generator = require(`./generator.js`);
 //Flag
 var devMode = false;
 var enableDB = false;
-var cleanMode = true;
+var cleanMode = false;
 //Admin IDs
-var moderatorList = [];
+var moderatorList = [`137041823683182592`];
 var GAME_ROLES = [`Starcraft`, `Destiny`, `WoW`, `Rocket League`, `Hearthstone`, `Smash4`, `Melee`, `Smash`,`Overwatch`, `CS:GO`, `Smite`, `Fire Emblem`, `Paladins`, `Pokemon`, `Runescape`, `Tabletop`, `PUBG`, `Rainbow Six Siege`, `DotA`, `HOTS`, `League of Legends`, `Fortnite`]
-var MEMBER_COMMANDS = [`!role`, `!unrole`, `!avatar`];
-var ADMIN_COMMANDS = [`!announcement`, `!cleanmode`,`!channel`, `channel introductions`, '!channel list', `!channel rules`, 'channel update', `!devmode`, `!emotelist`, `!welcomeImage`];
-var MOD_COMMANDS = [``];
+var MEMBER_COMMANDS = [`!role`, `!unrole`, `!avatar`, '!who'];
+var ADMIN_COMMANDS = [`!cleanmode`,`!channel`, `channel introductions`, '!channel list', `!channel rules`, 'channel update', `!devmode`, `!emotelist`,'!promote', '!deomote',`!welcomeImage`];
+var MOD_COMMANDS = [`!announcement`];
 var logChannel = ``;
 var channelList = {};
 var introductions = '#introductions';
@@ -70,22 +70,22 @@ var modCommandList = ``;
 
 
 function fillLists(){
-// Role List
-GAME_ROLES.forEach((role) => {
-  roleList = roleList.concat(`- ${role}\n`);
-});
-//Command Lists
-MEMBER_COMMANDS.forEach((role) => {
-  commandList = commandList.concat(`- \`${role}\`\n`);
-});
-//Admin Lists
-ADMIN_COMMANDS.forEach((role) => {
-  adminCommandList = adminCommandList.concat(`- \`${role}\`\n`);
-});
-//Mod Lists
-MOD_COMMANDS.forEach((role) => {
-  modCommandList = modCommandList.concat(`- \`${role}\`\n`);
-});
+  // Role List
+  GAME_ROLES.forEach((role) => {
+    roleList = roleList.concat(`- ${role}\n`);
+  });
+  //Command Lists
+  MEMBER_COMMANDS.forEach((role) => {
+    commandList = commandList.concat(`- \`${role}\`\n`);
+  });
+  //Admin Lists
+  ADMIN_COMMANDS.forEach((role) => {
+    adminCommandList = adminCommandList.concat(`- \`${role}\`\n`);
+  });
+  //Mod Lists
+  MOD_COMMANDS.forEach((role) => {
+    modCommandList = modCommandList.concat(`- \`${role}\`\n`);
+  });
 };
 
 client.on(`ready`, () => {
@@ -108,7 +108,7 @@ client.on(`message`, (message) => {
     	//console.log(message)
 	}else{
     //Shorthand Log
-    if(message.channel != `DMChannel` && !message.author.bot){
+    if(message.channel != `DMChannel` && message.channel.guild){
       console.log(`Server: ` + message.channel.guild.name);
       //client.channels.get().send(message);
     }
@@ -167,7 +167,7 @@ client.on(`message`, (message) => {
     console.log(`-----------------`);
   }
   //Deletes commands when sent
-  if(cleanMode){
+  if(cleanMode && message.channel != `DMChannel`){
     message.delete()
     .then(msg => console.log(`Deleted message from ${msg.author.username}`))
     .catch(console.error);
@@ -178,32 +178,6 @@ client.on(`message`, (message) => {
       message.channel.send(`Admin premission granted!`);
     }
     /*message.channel.send(command);*/
-    //Make an announcement
-    if(command === 'announcement'){
-      var channel = args.shift();
-      if (channelList[channel]){
-        message.channel.send(`**Channel ID: ** ${channelList[channel]}`);
-        channel = channelList[channel];
-      }
-      if(client.channels.get(channel)){
-        //Images
-        var delay = 0;
-        //Broken with cleanMode #BUG #TODO
-        for (var [snowflake, attachment] of message.attachments) {
-          delay++;
-          client.channels.get(channel).send(" ", {files: [attachment.url]}).catch(console.error);
-        }
-        //Message
-        if(args[0]){
-          setTimeout(function(){
-            client.channels.get(channel).send(args.join(" ")).catch(console.error);
-          }, 1000*delay);
-        }
-      }else{
-        message.channel.send(`The channel ID \`${channel}\` is not avalibale. Please check them channel ID`)
-      }
-      return;
-    }
     //Channel Commands
     if(command === 'channel'){
       //Updates Channel info on bot
@@ -257,20 +231,73 @@ client.on(`message`, (message) => {
         cleanMode = true;
       }
       return;
-      }
-      if(command === 'welcomeImage'){
-        welcomeImage = args[0];
-        message.channel.send(`Changed Welcome image to ${welcomeImage}.`);
-      }
-      if(command == `admin`){
+    }
+    if(command == `admin`){
       message.channel.send(`Here are some things I can help you with as an admin: \n${adminCommandList}`);
       return
+    }
+    if(command === 'welcomeImage'){
+      if(!args[0]){
+        message.channel.send(`You need arguements for \`${command}\``);
+        return
+      }
+      welcomeImage = args[0];
+      message.channel.send(`Changed Welcome image to ${welcomeImage}.`);
+      return
+      }
+      if(command === 'promote'){
+        if(!args[0]){
+          message.channel.send(`You need arguements for \`${command}\``);
+          return
+        }
+        moderatorList.push(args[0]);
+        message.channel.send(`Mod List Updated!`);
+        return
+      }
+      if(command === `demote`){
+        if(!args[0]){
+          message.channel.send(`You need arguements for \`${command}\``);
+          return
+        }
+        remove(moderatorList, args[0]);
+        message.channel.send(`Mod List Updated!`);
+        return
       }
     }
   //Moderator Only tools
   if (mod){
-    if(devmode){
+    if(devMode){
       message.channel.send(`Moderator speaking - everyone better listen up!`);
+    }
+    //Make an announcement
+    if(command === 'announcement'){
+      var channel = args.shift();
+      if (channelList[channel]){
+        message.channel.send(`**Channel ID: ** ${channelList[channel]}`);
+        channel = channelList[channel];
+      }
+      if(client.channels.get(channel)){
+        //Images
+        var delay = 0;
+        //Broken with cleanMode #BUG #TODO
+        for (var [snowflake, attachment] of message.attachments) {
+          delay++;
+          client.channels.get(channel).send(" ", {files: [attachment.url]}).catch(console.error);
+        }
+        //Message
+        if(args[0]){
+          setTimeout(function(){
+            client.channels.get(channel).send(args.join(" ")).catch(console.error);
+          }, 1000*delay);
+        }
+      }else{
+        message.channel.send(`The channel ID \`${channel}\` is not avalibale. Please check them channel ID`)
+      }
+      return;
+    }
+    if(command == `mod`){
+      message.channel.send(`Here are some things I can help you with as an moderator: \n${modCommandList}`);
+      return;
     }
   }
 
@@ -311,6 +338,10 @@ client.on(`message`, (message) => {
   }
   if(command ==  `help`){
     message.channel.send(`Here are some things I can help you with: \n${commandList}`);
+    return;
+  }
+  if(command ==  `who`){
+    message.reply(`ID: \`${message.author.id}\``);
     return;
   }
   if(command == 'hello'){
