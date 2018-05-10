@@ -12,11 +12,13 @@ var generator = require(`./generator.js`);
 var devMode = false;
 var enableDB = false;
 var cleanMode = false;
+var welcoemMessage = false;
+
 //Admin IDs
 var moderatorList = [`137041823683182592`];
 var GAME_ROLES = [`Starcraft`, `Destiny`, `WoW`, `Rocket League`, `Hearthstone`, `Smash4`, `Melee`, `Smash`,`Overwatch`, `CS:GO`, `Smite`, `Fire Emblem`, `Paladins`, `Pokemon`, `Runescape`, `Tabletop`, `PUBG`, `Rainbow Six Siege`, `DotA`, `HOTS`, `League of Legends`, `Fortnite`]
-var MEMBER_COMMANDS = [`!role`, `!unrole`, `!avatar`, '!who'];
-var ADMIN_COMMANDS = [`!cleanmode`,`!channel`, `channel introductions`, '!channel list', `!channel rules`, 'channel update', `!devmode`, `!emotelist`,'!promote', '!deomote',`!welcomeImage`];
+var MEMBER_COMMANDS = [`!role`, `!unrole`, `!avatar`, `!invite`, '!who'];
+var ADMIN_COMMANDS = [`!cleanmode`,`!channel`, `channel introductions`, '!channel list', `!channel rules`, 'channel update', `!devmode`, `!emotelist`,'!promote', '!deomote', `status`, `!welcomeImage`, `!welcoemMessage`];
 var MOD_COMMANDS = [`!announcement`];
 var logChannel = ``;
 var channelList = {};
@@ -232,6 +234,24 @@ client.on(`message`, (message) => {
       }
       return;
     }
+    if (command == `status`){
+      if(!cleanMode){
+        message.channel.send(`**Status:** \nDev Mode: \`${devMode}\`\nClean Mode: \`${cleanMode}\`\nDatabase Connection: \`${enableDB}\`\nWelcome Message: \`${welcoemMessage}\``);
+      }else{
+        message.author.send(`**Status:** \nDev Mode: \`${devMode}\`\nClean Mode: \`${cleanMode}\`\nDatabase Connection: \`${enableDB}\`\nWelcome Message: \`${welcoemMessage}\``);
+      }
+      return;
+    }
+    if (command == `welcoemMessage`){
+      if(welcoemMessage){
+        message.channel.send(`Disabling Welcome Message!`);
+        welcoemMessage = false;
+      }else{
+        message.channel.send(`Enabling Welcome Message. Happy to help!`);
+        welcoemMessage = true;
+      }
+      return;
+    }
     if(command == `admin`){
       message.channel.send(`Here are some things I can help you with as an admin: \n${adminCommandList}`);
       return
@@ -244,26 +264,26 @@ client.on(`message`, (message) => {
       welcomeImage = args[0];
       message.channel.send(`Changed Welcome image to ${welcomeImage}.`);
       return
-      }
-      if(command === 'promote'){
-        if(!args[0]){
-          message.channel.send(`You need arguements for \`${command}\``);
-          return
-        }
-        moderatorList.push(args[0]);
-        message.channel.send(`Mod List Updated!`);
-        return
-      }
-      if(command === `demote`){
-        if(!args[0]){
-          message.channel.send(`You need arguements for \`${command}\``);
-          return
-        }
-        remove(moderatorList, args[0]);
-        message.channel.send(`Mod List Updated!`);
-        return
-      }
     }
+    if(command === 'promote'){
+      if(!args[0]){
+        message.channel.send(`You need arguements for \`${command}\``);
+        return
+      }
+      moderatorList.push(args[0]);
+      message.channel.send(`Mod List Updated!`);
+      return
+    }
+    if(command === `demote`){
+      if(!args[0]){
+        message.channel.send(`You need arguements for \`${command}\``);
+        return
+      }
+      remove(moderatorList, args[0]);
+      message.channel.send(`Mod List Updated!`);
+      return
+    }
+  }
   //Moderator Only tools
   if (mod){
     if(devMode){
@@ -305,7 +325,10 @@ client.on(`message`, (message) => {
         message.reply(`here is the link ${message.author.displayAvatarURL}`);
         return;
   }
-
+  if(command == 'invite'){
+        message.reply(`the invite link is \`http://discord.gg/tespacarleton\``);
+        return;
+  }
   if(command == 'role'){
     if (args.length < 1 || args[0] == `--help`) {
         message.channel.send(`**These are game roles you're allowed to join:** \n${roleList} \nUse \`!role <role_name>\` to join a role \nUse \`!rmrole <role_name>\` to leave a role`)
@@ -354,10 +377,12 @@ client.on(`message`, (message) => {
 client.on(`error`, e => { console.error(e) })
 
 client.on(`guildMemberAdd`,member=>{
+  if(welcoemMessage){
   member.send(" ", {files: [welcomeImage]}).catch(console.error);
   setTimeout(function(){
     member.send(`Welcome to the Tespa Carleton Discord Server!\nPlease read the rules in ${rules} and  then introduce yourself in ${introductions}.\nIf you have any questions, do not hesitate to send a direct message to an Executive or Council member!`);
     }, 1000);
+  }
 });
 
 client.login(token);
