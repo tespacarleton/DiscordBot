@@ -16,7 +16,7 @@ var welcoemMessage = false;
 
 //Admin IDs
 var moderatorList = [`137041823683182592`];
-var GAME_ROLES = [`Starcraft`, `Destiny`, `WoW`, `Rocket League`, `Hearthstone`, `Smash4`, `Melee`, `Smash`,`Overwatch`, `CS:GO`, `Smite`, `Fire Emblem`, `Paladins`, `Pokemon`, `Runescape`, `Tabletop`, `PUBG`, `Rainbow Six Siege`, `DotA`, `HOTS`, `League of Legends`, `Fortnite`]
+var GAME_ROLES = [`Starcraft`, `Destiny`, `WoW`, `Rocket League`, `Hearthstone`, `Smash4`, `Melee`, `Smash`,`Overwatch`, `CS:GO`, `Smite`, `Fire Emblem`, `Paladins`, `Pokemon`, `Runescape`, `Tabletop`, `PUBG`, `Rainbow Six Siege`, `DotA`, `HOTS`, `League of Legends`, `Fortnite`, `PS4`, `XBOX`, `Switch`]
 var MEMBER_COMMANDS = [`!role`, `!unrole`, `!avatar`, `!invite`, '!who'];
 var ADMIN_COMMANDS = [`!cleanmode`,`!channel`, `channel introductions`, '!channel list', `!channel rules`, 'channel update', `!devmode`, `!emotelist`,'!promote', '!deomote', `status`, `!welcomeImage`, `!welcoemMessage`];
 var MOD_COMMANDS = [`!announcement`];
