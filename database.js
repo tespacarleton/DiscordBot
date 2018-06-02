@@ -1,28 +1,23 @@
-//database.js
-var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://bot:bot@ds019078.mlab.com:19078/tespacarletondiscord";
+var mysql = require('mysql');
+var connection = mysql.createConnection({
+	host : process.env.SQL_HOST,
+	port : process.env.SQL_PORT,
+  user : process.env.SQL_USER,
+  password : process.env.SQL_PASS,
+  database : process.env.SQL_DATABASE
+});
 
-exports.readyCheck = function (r) {
-  return "DB Script ready"
+exports.get_users = function(status) {
+	return new Promise(function(resolve, reject) {
+		connection.query(`SELECT id FROM user_privileges WHERE status='${status}'`, function (error, results, fields) {
+			if (error) return reject(error);
+			var ids = [];
+			for(var i=0; i < results.length; i++){
+				ids.push(results[i].id);
+			}
+			return resolve(ids);
+		});
+	});
 };
 
-exports.start = function(){
-	MongoClient.connect(url, function(err, db) {
-  	if (err) throw err;
-  	console.log("Database created!");
-  	MongoClient.
-  	db.close();
-});
-}
-
-exports.insert = function(collection, data){
-	MongoClient.connect(url, function(err, db) {
-  	if (err) throw err;
-  	var dbo = db.db("tespacarletondiscord");
-  	dbo.collection(collection).insertOne(data, function(err, res) {
-    if (err) throw err;
-    console.log("1 document inserted");
-    db.close();
-  });
-});
-}
+exports.add_log = function()

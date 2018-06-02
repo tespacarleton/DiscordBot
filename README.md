@@ -15,3 +15,9 @@ Start the app with
 '''
 node app.js
 '''
+
+Ensure node dependencies are met with (run first line as admin)
+'''
+npm install --global --production windows-build-tools
+npm install
+'''

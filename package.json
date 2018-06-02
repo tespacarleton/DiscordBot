@@ -19,6 +19,6 @@
   "homepage": "https://github.com/tespacarleton/DiscordBot#readme",
   "dependencies": {
     "discord.js": "^11.3.2",
-    "mongodb": "^3.0.5"
+    "mysql": "latest"
   }
 }

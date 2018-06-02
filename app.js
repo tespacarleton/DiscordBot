@@ -1,24 +1,26 @@
 const Discord = require(`discord.js`);
 const client = new Discord.Client();
 // The token of your bot - https://discordapp.com/developers/applications/me
-const token = `Token`;
+const token = `NDUyMjA3OTc1MzU2OTU2Njcy.DfM_NQ.OYUmXHtRpFrtIUa1GQ7C-kbPPT0`;
 
 //Constants
-const adminList = [`137041823683182592`];
+
 //Local
 var database = require(`./database.js`);
 var generator = require(`./generator.js`);
 //Flag
 var devMode = false;
-var enableDB = false;
+var enableDB = true;
 var cleanMode = false;
-var welcoemMessage = false;
+var welcomeMessage = false;
 
 //Admin IDs
-var moderatorList = [`137041823683182592`];
+var adminList = [];
+var modList = [];
+var userList = [];
 var GAME_ROLES = [`Starcraft`, `Destiny`, `WoW`, `Rocket League`, `Hearthstone`, `Smash4`, `Melee`, `Smash`,`Overwatch`, `CS:GO`, `Smite`, `Fire Emblem`, `Paladins`, `Pokemon`, `Runescape`, `Tabletop`, `PUBG`, `Rainbow Six Siege`, `DotA`, `HOTS`, `League of Legends`, `Fortnite`, `PS4`, `XBOX`, `Switch`]
 var MEMBER_COMMANDS = [`!role`, `!unrole`, `!avatar`, `!invite`, '!who'];
-var ADMIN_COMMANDS = [`!cleanmode`,`!channel`, `channel introductions`, '!channel list', `!channel rules`, 'channel update', `!devmode`, `!emotelist`,'!promote', '!deomote', `status`, `!welcomeImage`, `!welcoemMessage`];
+var ADMIN_COMMANDS = [`!cleanmode`,`!channel`, `channel introductions`, '!channel list', `!channel rules`, 'channel update', `!devmode`, `!emotelist`,'!promote', '!deomote', `status`, `!welcomeImage`, `!welcomeMessage`];
 var MOD_COMMANDS = [`!announcement`];
 var logChannel = ``;
 var channelList = {};
@@ -93,9 +95,18 @@ function fillLists(){
 client.on(`ready`, () => {
   console.log(`I am ready!`);
   if(enableDB){
-  	console.log(database.readyCheck());
+    Promise.all([database.get_users('admin'), database.get_users('mod'), database.get_users('user')])
+    .then(function(allData) {
+      adminList = allData[0];
+      modList = allData[1];
+      userList = allData[2];
+      console.log("Admins:" + adminList.toString());
+      console.log("Mods:" + modList.toString());
+      console.log("Users:" + userList.toString());
+    });
+    
 	}
-  if(devMode){
+  if(devMode){clear
     console.log('devMode Enabled');
   }
   if(cleanMode){
@@ -236,19 +247,19 @@ client.on(`message`, (message) => {
     }
     if (command == `status`){
       if(!cleanMode){
-        message.channel.send(`**Status:** \nDev Mode: \`${devMode}\`\nClean Mode: \`${cleanMode}\`\nDatabase Connection: \`${enableDB}\`\nWelcome Message: \`${welcoemMessage}\``);
+        message.channel.send(`**Status:** \nDev Mode: \`${devMode}\`\nClean Mode: \`${cleanMode}\`\nDatabase Connection: \`${enableDB}\`\nWelcome Message: \`${welcomeMessage}\``);
       }else{
-        message.author.send(`**Status:** \nDev Mode: \`${devMode}\`\nClean Mode: \`${cleanMode}\`\nDatabase Connection: \`${enableDB}\`\nWelcome Message: \`${welcoemMessage}\``);
+        message.author.send(`**Status:** \nDev Mode: \`${devMode}\`\nClean Mode: \`${cleanMode}\`\nDatabase Connection: \`${enableDB}\`\nWelcome Message: \`${welcomeMessage}\``);
       }
       return;
     }
-    if (command == `welcoemMessage`){
-      if(welcoemMessage){
+    if (command == `welcomeMessage`){
+      if(welcomeMessage){
         message.channel.send(`Disabling Welcome Message!`);
-        welcoemMessage = false;
+        welcomeMessage = false;
       }else{
         message.channel.send(`Enabling Welcome Message. Happy to help!`);
-        welcoemMessage = true;
+        welcomeMessage = true;
       }
       return;
     }
@@ -377,7 +388,7 @@ client.on(`message`, (message) => {
 client.on(`error`, e => { console.error(e) })
 
 client.on(`guildMemberAdd`,member=>{
-  if(welcoemMessage){
+  if(welcomeMessage){
   member.send(" ", {files: [welcomeImage]}).catch(console.error);
   setTimeout(function(){
     member.send(`Welcome to the Tespa Carleton Discord Server!\nPlease read the rules in ${rules} and  then introduce yourself in ${introductions}.\nIf you have any questions, do not hesitate to send a direct message to an Executive or Council member!`);
