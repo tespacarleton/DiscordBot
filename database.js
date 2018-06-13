@@ -20,4 +20,4 @@ exports.get_users = function(status) {
 	});
 };
 
-exports.add_log = function()
+exports.add_log = function(){};
