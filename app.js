@@ -3,7 +3,7 @@
 global.Discord = require(`discord.js`);
 global.client = new Discord.Client();
 // The token of your bot - https://discordapp.com/developers/applications/me
-global.token = `NDUyMjA3OTc1MzU2OTU2Njcy.DfM_NQ.OYUmXHtRpFrtIUa1GQ7C-kbPPT0`;
+global.token = process.env.DISCORD_TOKEN;
 
 //Constants
 
