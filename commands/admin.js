@@ -1,16 +1,5 @@
 exports.channel = function(message, args) {
-    //Updates Channel info on bot
-    if (args[0] === 'update') {
-        global.channelList[message.channel.name] = message.channel.id;
-        if (global.cleanMode) {
-            message.author.send(`**Updated** ${message.channel} -> ${global.channelList[message.channel.name]}`);
-        }
-        else {
-            message.channel.send(`**Updated** ${message.channel} -> ${global.channelList[message.channel.name]}`);
-        }
-        //Lists channels with shortcuts
-    }
-    else if (args[0] === 'list') {
+    if (args[0] === 'list') {
         //TODO
         message.channel.send(`**The following channels shortcuts are avalibale: **Currently Bugged #TODO**`);
     }
@@ -84,7 +73,7 @@ exports.welcomeMessage = function(message, args) {
 }
 
 exports.admin = function(message, args) {
-    message.channel.send(`Here are some things I can help you with as an admin: \n${global.adminCommandList}`);
+    message.channel.send(`Here are some things I can help you with as an admin: \n${global.util.listToString(Object.keys(exports))}`);
     return;
 }
 
@@ -100,20 +89,84 @@ exports.welcomeImage = function(message, args) {
 
 exports.promote = function(message, args) {
     if (!args[0]) {
-        message.channel.send(`You need arguements for \`${command}\``);
+        message.channel.send(`You need arguements for promote!`);
         return;
     }
-    global.moderatorList.push(args[0]);
-    message.channel.send(`Mod List Updated!`);
-    return;
+    if(args[0].match(/^[0-9]+$/) != null){
+        var user = global.util.getUser({id: args[0]});
+      }
+      else{
+        var user = global.util.getUser({displayName: args[0]});
+    }
+    if(user.length !== undefined){
+        userOptions = []
+        user.forEach(function(u) {
+            userOptions.push(
+                JSON.stringify({id: u.id, username: u.username, discriminator: u.discriminator})
+            );
+        });
+        userOptions = util.listToString(userOptions);
+        message.channel.send(`The identifier \`${args[0]}\` matches multiple users!\n
+            Please try again with a userID: \n ${userOptions}`)
+        return;
+    }
+    if(global.userList[parseInt(user.id)]>=2){
+        message.channel.send(`Cannot promote an admin!`)
+        return;
+    }
+    global.database.promoteUser(user).then(
+        function(results){
+            global.database.getUsers();
+            message.channel.send(`Mod List Updated!`);
+        }).catch(
+        function(reason){
+            console.log(reason);
+            message.channel.send(`Update Failed, see system logs`);
+        }
+    );
 }
 
+//TODO ensure database update works
 exports.demote = function(message, args) {
     if (!args[0]) {
-        message.channel.send(`You need arguements for \`${command}\``);
+        message.channel.send(`You need arguements for demote!`);
         return;
     }
-    global.remove(global.moderatorList, args[0]);
-    message.channel.send(`Mod List Updated!`);
+    if(args[0].match(/^[0-9]+$/) != null){
+        var user = global.util.getUser({id: args[0]});
+    }
+    else{
+        var user = global.util.getUser({displayName: args[0]});
+    }
+    if(user.length !== undefined){
+        userOptions = []
+        user.forEach(function(u) {
+            userOptions.push(
+                JSON.stringify({id: u.id, username: u.username, discriminator: u.discriminator})
+            );
+        });
+        userOptions = util.listToString(userOptions);
+        message.channel.send(`The identifier \`${args[0]}\` matches multiple users!\n
+            Please try again with a userID: \n ${userOptions}`)
+        return;
+    }
+    if(global.userList[parseInt(user.id)]>=3){
+        message.channel.send(`Cannot demote an owner!`)
+        return;
+    }
+    else if(global.userList[parseInt(user.id)]<=0){
+        message.channel.send(`Cannot demote a user!`)
+        return;
+    }
+    global.database.demoteUser(user).then(
+        function(results){
+            global.database.getUsers();
+            message.channel.send(`Mod List Updated!`);
+        }).catch(
+        function(reason){
+            console.log(reason);
+            message.channel.send(`Update Failed, see system logs`);
+        }
+    );
     return;
 }

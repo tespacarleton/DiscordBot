@@ -10,7 +10,7 @@ exports.invite = function(message, args){
 
 exports.role = function(message, args){
     if (args.length < 1 || args[0] == `--help`) {
-        message.channel.send(`**These are game roles you're allowed to join:** \n${global.roleList} \nUse \`!role <role_name>\` to join a role \nUse \`!rmrole <role_name>\` to leave a role`)
+        message.channel.send(`**These are game roles you're allowed to join:** \n${global.util.listToString(global.GAME_ROLES)} \nUse \`!role <role_name>\` to join a role \nUse \`!rmrole <role_name>\` to leave a role`)
         return;
     }
 
@@ -41,7 +41,7 @@ exports.rmrole = function(message, args){
 }
 
 exports.help = function(message, args){
-    message.channel.send(`Here are some things I can help you with: \n${global.commandList}`);
+    message.channel.send(`Here are some things I can help you with: \n${global.util.listToString(Object.keys(exports))}`);
     return;
 }
 

@@ -2,10 +2,11 @@
 
 global.Discord = require(`discord.js`);
 global.client = new Discord.Client();
+client = global.client;
 // The token of your bot - https://discordapp.com/developers/applications/me
 global.token = process.env.DISCORD_TOKEN;
 
-//Constants
+global.util = require('./util.js');
 
 //Local
 global.database = require(`./database.js`);
@@ -16,76 +17,28 @@ global.enableDB = true;
 global.cleanMode = false;
 global.welcomeMessage = false;
 
+global.OWNER_LEVEL = 3;
+global.ADMIN_LEVEL = 2;
+global.MOD_LEVEL = 1;
+
 //Admin IDs
-global.adminList = [];
-global.modList = [];
 global.userList = [];
 global.GAME_ROLES = [`Starcraft`, `Destiny`, `WoW`, `Rocket League`, `Hearthstone`, `Smash4`, `Melee`, `Smash`,`Overwatch`, `CS:GO`, `Smite`, `Fire Emblem`, `Paladins`, `Pokemon`, `Runescape`, `Tabletop`, `PUBG`, `Rainbow Six Siege`, `DotA`, `HOTS`, `League of Legends`, `Fortnite`, `PS4`, `XBOX`, `Switch`]
 global.MEMBER_COMMANDS = require('./commands/member.js')
 global.ADMIN_COMMANDS = require('./commands/admin.js');
 global.MOD_COMMANDS = require('./commands/mod.js');
-global.channelList = {};
 global.introductions = '#introductions';
 global.rules = "#welcome";
 global.welcomeImage = "https://cdn.discordapp.com/attachments/443848163724623893/443857040683696139/RedditLink.png";
 
-//Helpers
-global.remove = function(array, element) {
-    const index = array.indexOf(element);
-    if (index !== -1) {
-        array.splice(index, 1);
-    }
-}
-
-global.removeAll = function(array, element) {
-	return array.filter(e => e !== element);
-  //test
-}
-global.contains = function(needle) {
-    // Per spec, the way to identify NaN is that it is not equal to itself
-    var findNaN = needle !== needle;
-    var indexOf;
-
-    if(!findNaN && typeof Array.prototype.indexOf === `function`) {
-        indexOf = Array.prototype.indexOf;
-    } else {
-        indexOf = function(needle) {
-            var i = -1, index = -1;
-
-            for(i = 0; i < this.length; i++) {
-                var item = this[i];
-
-                if((findNaN && item !== item) || item === needle) {
-                    index = i;
-                    break;
-                }
-            }
-
-            return index;
-        };
-    }
-
-    return indexOf.call(this, needle) > -1;
-};
-
-global.roleList = ``;
-
-
-function fillLists(){
-  // Role List
-  GAME_ROLES.forEach((role) => {
-    roleList = roleList.concat(`- ${role}\n`);
-  });
-};
-
 client.on(`ready`, () => {
   console.log(`I am ready!`);
+  global.server = global.client.guilds.get(process.env.SERVER_ID);
   if(enableDB){
-    Promise.all([database.get_users('admin'), database.get_users('mod'), database.get_users('user')])
-    .then(function(allData) {
-      adminList = allData[0];
-      moderatorList = allData[1];
-      memberList = allData[2];
+    Promise.resolve(database.getUsers())
+    .then(function(results) {
+      userList = results;
+      console.log(userList);
       console.log("database connection successful")
     });
     
@@ -96,7 +49,6 @@ client.on(`ready`, () => {
   if(cleanMode){
     console.log('cleanMode Enabled');
   }
-  fillLists();
 });
 
 client.on(`message`, (message) => {
@@ -144,8 +96,6 @@ client.on(`message`, (message) => {
 		};
 	//database.insert(`messages`, myobj);
 	}
-  var admin = contains.call(adminList, message.author.id);
-  var mod = contains.call(moderatorList, message.author.id);
 	// Set prefix
   let prefix = `!`
   // Exit if bot or prefix not found: Do all non-commands above this line
@@ -171,7 +121,7 @@ client.on(`message`, (message) => {
   }
 
   //Admin Only tools
-  if (admin){
+  if (userList[message.author.id] > global.ADMIN_LEVEL){
     if (global.ADMIN_COMMANDS[command] != null){
       global.ADMIN_COMMANDS[command](message, args);
       return;
@@ -179,7 +129,7 @@ client.on(`message`, (message) => {
   }
 
   //Moderator Only tools
-  if (mod){
+  if (userList[message.author.id] > global.MOD_LEVEL){
     if (global.MOD_COMMANDS[command] != null){
       if(devMode){
         message.channel.send(`Moderator speaking - everyone better listen up!`);
@@ -204,9 +154,9 @@ client.on(`guildMemberAdd`,member=>{
   if(welcomeMessage){
   member.send(" ", {files: [welcomeImage]}).catch(console.error);
   setTimeout(function(){
-    member.send(`Welcome to the Tespa Carleton Discord Server!\nPlease read the rules in ${rules} and  then introduce yourself in ${introductions}.\nIf you have any questions, do not hesitate to send a direct message to an Executive or Council member!`);
+    member.send(`Welcome to the Tespa Carleton Discord Server!\nPlease read the rules in ${global.rules} and  then introduce yourself in ${global.introductions}.\nIf you have any questions, do not hesitate to send a direct message to an Executive or Council member!`);
     }, 1000);
   }
 });
 
-client.login(token);
+client.login(global.token);
