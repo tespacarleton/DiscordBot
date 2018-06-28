@@ -53,7 +53,10 @@ exports.getUser = function(options={id: undefined, displayName: undefined}){
     displayName = options.displayName;
     if(id!==undefined){
         console.log(id);
-        return global.server.members.get(id).user;
+        var user =  global.server.members.get(id);
+        if(user){
+            return user.user
+        }
     }
     else if(displayName!==undefined){
         //Filter for proper display names
@@ -76,9 +79,7 @@ exports.getUser = function(options={id: undefined, displayName: undefined}){
         }
         return undefined;
     }
-    else{
-        return "You must specify either an id or a displayName!";
-    }
+    return undefined;
 };
 
 exports.getChannel = function(options={id: undefined, channelName: undefined, type: 'text'}){
@@ -133,3 +134,23 @@ exports.getChannels = function(){
     });
     return users;
 };
+
+exports.updateUserPermissions = function(callbackChannel=undefined, msg=undefined){
+    Promise.resolve(global.database.getUsers())
+    .then(function(results) {
+      global.userList = results;
+      if(callbackChannel !== undefined && msg !== undefined){
+          callbackChannel.send(msg);
+      }
+    });
+}
+
+exports.updateSpecialChannels = function(callbackChannel=undefined, msg=undefined){
+    Promise.resolve(global.database.getSpecialChannels())
+    .then(function(results) {
+      global.specialChannels = results;
+      if(callbackChannel !== undefined && msg !== undefined){
+          callbackChannel.send(msg);
+      }
+    });
+}

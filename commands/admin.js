@@ -1,17 +1,30 @@
 exports.channel = function(message, args) {
     if (args[0] === 'list') {
         //TODO
-        message.channel.send(`**The following channels shortcuts are avalibale: **Currently Bugged #TODO**`);
+        message.channel.send(`**The following channels shortcuts are available: **Currently Bugged #TODO**`);
     }
-    else if (args[0] === 'rules') {
-        rules = message.channel;
-        message.author.send(`**Updated** ${message.channel} -> Rules Channel}`);
-        message.delete();
+    else if (args[0] === 'set') {
+        if(!args[1] || !args[2]){
+            message.channel.send("Specify a role and a channel to assign it to!");
+        }
+        var id_rx = /^<#([0-9]+)>$/g;
+        var id = id_rx.exec(args[2]);
+        id = id ? id[1] : args[2];
+        var channel = global.util.getChannel({id: id, type: 'text'});
+        if(channel === undefined){
+            message.channel.send("Could not find the channel!");
+        }
+        else{
+            global.database.setSpecialChannel(args[1], channel.id, channel.name, message.channel);
+            global.util.updateSpecialChannels(message.channel,`Successfully set channel ${args[2]} as the ${args[1]} channel`);
+        }
     }
-    else if (args[0] === 'introductions') {
-        introductions = message.channel;
-        message.author.send(`**Updated** ${message.channel} -> Introductions Channel}`);
-        message.delete();
+    else if(args[0] === 'remove'){
+        if(!args[1]){
+            message.channel.send("Specify a role to remove!");
+        }
+        global.database.removeSpecialChannel(args[1]);
+        global.util.updateSpecialChannels(message.channel, `Successfully removed the ${args[1]} channel role`);
     }
     else {
         message.channel.send(`**Info for** ${message.channel}`);
@@ -60,7 +73,7 @@ exports.status = function(message, args) {
     return;
 }
 
-exports.welcomeMessage = function(message, args) {
+exports.welcome_message = function(message, args) {
     if (global.welcomeMessage) {
         message.channel.send(`Disabling Welcome Message!`);
         global.welcomeMessage = false;
@@ -77,7 +90,7 @@ exports.admin = function(message, args) {
     return;
 }
 
-exports.welcomeImage = function(message, args) {
+exports.welcome_image = function(message, args) {
     if (!args[0]) {
         message.channel.send(`You need arguements for \`${command}\``);
         return;
@@ -89,35 +102,22 @@ exports.welcomeImage = function(message, args) {
 
 exports.promote = function(message, args) {
     if (!args[0]) {
-        message.channel.send(`You need arguements for promote!`);
+        message.channel.send(`You need arguments for promote!`);
         return;
     }
-    if(args[0].match(/^[0-9]+$/) != null){
-        var user = global.util.getUser({id: args[0]});
-      }
-      else{
-        var user = global.util.getUser({displayName: args[0]});
-    }
-    if(user.length !== undefined){
-        userOptions = []
-        user.forEach(function(u) {
-            userOptions.push(
-                JSON.stringify({id: u.id, username: u.username, discriminator: u.discriminator})
-            );
-        });
-        userOptions = util.listToString(userOptions);
-        message.channel.send(`The identifier \`${args[0]}\` matches multiple users!\n
-            Please try again with a userID: \n ${userOptions}`)
-        return;
-    }
-    if(global.userList[parseInt(user.id)]>=2){
-        message.channel.send(`Cannot promote an admin!`)
+    var id_rx = /^<@([0-9]+)>$/g;
+    var id = id_rx.exec(args[0]);
+    console.log(id);
+    id = id ? id[1] : args[0]
+    console.log(id);
+    var user = global.util.getUser({id: id});
+    if(user === undefined || global.userList[user.id]>=2){
+        message.channel.send(`Cannot promote that user!`)
         return;
     }
     global.database.promoteUser(user).then(
         function(results){
-            global.database.getUsers();
-            message.channel.send(`Mod List Updated!`);
+            global.util.updateUserPermissions(message.channel, `Successfully promoted ${args[0]}`);
         }).catch(
         function(reason){
             console.log(reason);
@@ -126,42 +126,24 @@ exports.promote = function(message, args) {
     );
 }
 
-//TODO ensure database update works
 exports.demote = function(message, args) {
     if (!args[0]) {
-        message.channel.send(`You need arguements for demote!`);
+        message.channel.send(`You need arguments for demote!`);
         return;
     }
-    if(args[0].match(/^[0-9]+$/) != null){
-        var user = global.util.getUser({id: args[0]});
-    }
-    else{
-        var user = global.util.getUser({displayName: args[0]});
-    }
-    if(user.length !== undefined){
-        userOptions = []
-        user.forEach(function(u) {
-            userOptions.push(
-                JSON.stringify({id: u.id, username: u.username, discriminator: u.discriminator})
-            );
-        });
-        userOptions = util.listToString(userOptions);
-        message.channel.send(`The identifier \`${args[0]}\` matches multiple users!\n
-            Please try again with a userID: \n ${userOptions}`)
-        return;
-    }
-    if(global.userList[parseInt(user.id)]>=3){
-        message.channel.send(`Cannot demote an owner!`)
-        return;
-    }
-    else if(global.userList[parseInt(user.id)]<=0){
-        message.channel.send(`Cannot demote a user!`)
+    var id_rx = /^<@([0-9]+)>$/g;
+    var id = id_rx.exec(args[0]);
+    console.log(id);
+    id = id ? id[1] : args[0]
+    console.log(id);
+    var user = global.util.getUser({id: id});
+    if(user === undefined || global.userList[user.id] === undefined || global.userList[user.id]>=3 || global.userList[user.id]<=0){
+        message.channel.send(`Cannot demote that user!`)
         return;
     }
     global.database.demoteUser(user).then(
         function(results){
-            global.database.getUsers();
-            message.channel.send(`Mod List Updated!`);
+            global.util.updateUserPermissions(message.channel, `Successfully demoted ${args[0]}`);
         }).catch(
         function(reason){
             console.log(reason);

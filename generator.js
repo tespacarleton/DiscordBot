@@ -5,7 +5,7 @@ List of context:
 Command not found
 Greeting
 */
-exports.message = function(context, value){
+exports.message = function(context, value=undefined){
 	var response = ``;
 	var variations = -1;
 	context = context.toLowerCase();

@@ -22,25 +22,21 @@ global.ADMIN_LEVEL = 2;
 global.MOD_LEVEL = 1;
 
 //Admin IDs
-global.userList = [];
+global.userList = {};
+global.specialChannels = {};
 global.GAME_ROLES = [`Starcraft`, `Destiny`, `WoW`, `Rocket League`, `Hearthstone`, `Smash4`, `Melee`, `Smash`,`Overwatch`, `CS:GO`, `Smite`, `Fire Emblem`, `Paladins`, `Pokemon`, `Runescape`, `Tabletop`, `PUBG`, `Rainbow Six Siege`, `DotA`, `HOTS`, `League of Legends`, `Fortnite`, `PS4`, `XBOX`, `Switch`]
 global.MEMBER_COMMANDS = require('./commands/member.js')
 global.ADMIN_COMMANDS = require('./commands/admin.js');
 global.MOD_COMMANDS = require('./commands/mod.js');
-global.introductions = '#introductions';
-global.rules = "#welcome";
 global.welcomeImage = "https://cdn.discordapp.com/attachments/443848163724623893/443857040683696139/RedditLink.png";
 
 client.on(`ready`, () => {
   console.log(`I am ready!`);
   global.server = global.client.guilds.get(process.env.SERVER_ID);
   if(enableDB){
-    Promise.resolve(database.getUsers())
-    .then(function(results) {
-      userList = results;
-      console.log(userList);
-      console.log("database connection successful")
-    });
+    global.util.updateUserPermissions();
+    global.util.updateSpecialChannels();
+    console.log("Connected to database succesfully");
     
 	}
   if(devMode){
@@ -104,47 +100,58 @@ client.on(`message`, (message) => {
   }
   const args = message.content.slice(prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
-  if(devMode){
-    console.log(`-----------------`);
-    console.log('Command Detected');
-    console.log(`Admin: ` + admin);
-    console.log(`Moderator: ` + mod);
-    console.log(`Args: ` + args);
-    console.log(`Command: ` + command);
-    console.log(`-----------------`);
-  }
-  //Deletes commands when sent
-  if(cleanMode && message.channel != `DMChannel`){
-    message.delete()
-    .then(msg => console.log(`Deleted message from ${msg.author.username}`))
-    .catch(console.error);
-  }
-
-  //Admin Only tools
-  if (userList[message.author.id] > global.ADMIN_LEVEL){
-    if (global.ADMIN_COMMANDS[command] != null){
-      global.ADMIN_COMMANDS[command](message, args);
-      return;
+  try{
+    if(devMode){
+      console.log(`-----------------`);
+      console.log('Command Detected');
+      console.log(`Admin: ` + admin);
+      console.log(`Moderator: ` + mod);
+      console.log(`Args: ` + args);
+      console.log(`Command: ` + command);
+      console.log(`-----------------`);
     }
-  }
-
-  //Moderator Only tools
-  if (userList[message.author.id] > global.MOD_LEVEL){
-    if (global.MOD_COMMANDS[command] != null){
-      if(devMode){
-        message.channel.send(`Moderator speaking - everyone better listen up!`);
-      }
-      global.MOD_COMMANDS[command](message, args);
-      return;
+    //Deletes commands when sent
+    if(cleanMode && message.channel != `DMChannel`){
+      message.delete()
+      .then(msg => console.log(`Deleted message from ${msg.author.username}`))
+      .catch(console.error);
     }
-  }
   
-  //Everybody tools
-  if (global.MEMBER_COMMANDS[command] != null){
-    global.MEMBER_COMMANDS[command](message, args);
-    return;
+    //Admin Only tools
+    if (userList[message.author.id] > global.ADMIN_LEVEL){
+      if (global.ADMIN_COMMANDS[command] != null){
+        global.ADMIN_COMMANDS[command](message, args);
+        return;
+      }
+    }
+  
+    //Moderator Only tools
+    if (userList[message.author.id] > global.MOD_LEVEL){
+      if (global.MOD_COMMANDS[command] != null){
+        if(devMode){
+          message.channel.send(`Moderator speaking - everyone better listen up!`);
+        }
+        global.MOD_COMMANDS[command](message, args);
+        return;
+      }
+    }
+    
+    //Everybody tools
+    if (global.MEMBER_COMMANDS[command] != null){
+      global.MEMBER_COMMANDS[command](message, args);
+      return;
+    }
+    message.channel.send(`${generator.message(`Command Not Found`,command)}`)
   }
-  message.channel.send(`${generator.message(`Command Not Found`,command)}`)
+  catch(err){
+    if(devMode){
+      message.channel.send(err.message);
+    }
+    else{
+      message.channel.send(`An error occured processing the command "${command}"`);
+    }
+    
+  }
 
 });
 
@@ -154,7 +161,7 @@ client.on(`guildMemberAdd`,member=>{
   if(welcomeMessage){
   member.send(" ", {files: [welcomeImage]}).catch(console.error);
   setTimeout(function(){
-    member.send(`Welcome to the Tespa Carleton Discord Server!\nPlease read the rules in ${global.rules} and  then introduce yourself in ${global.introductions}.\nIf you have any questions, do not hesitate to send a direct message to an Executive or Council member!`);
+    member.send(`Welcome to the Tespa Carleton Discord Server!\nPlease read the rules in <#${global.specialChannels['rules']}> and  then introduce yourself in <#${global.specialChannels['introductions']}> .\nIf you have any questions, do not hesitate to send a direct message to an Executive or Council member!`);
     }, 1000);
   }
 });

@@ -51,6 +51,6 @@ exports.who = function(message, args){
 }
 
 exports.hello = function(message, args){
-    message.reply(`${global.generator.message(`Greeting`,command)}`)
+    message.reply(`${global.generator.message(`Greeting`)}`)
     return;
 }

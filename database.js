@@ -49,11 +49,9 @@ exports.promoteUser = function(user) {
 	return new Promise(function(resolve, reject) {
 		connection.query(
 			`INSERT INTO bot_permissions VALUES (
-				${parseInt(user.id)}, "${user.username}", "${user.discriminator}", 1, NULL
-			)
-			ON DUPLICATE KEY UPDATE permissions=permissions+1`,
+				${user.id}, "${user.username}", "${user.discriminator}", 1, NULL
+			)	ON DUPLICATE KEY UPDATE permissions=permissions+1`,
 		function (error, results, fields) {
-			if (error) return reject(error);
 			if (error) return reject(error);
 			return resolve(results);
 		});
@@ -71,11 +69,38 @@ exports.demoteUser = function(user) {
 	});
 }
 
-exports.addSpecialChannel = function(role, channel) {
-
+exports.setSpecialChannel = function(role, id, name) {
+	return new Promise(function(resolve, reject) {
+		console.log(id);
+		connection.query(`INSERT INTO special_channels VALUES (
+			"${role}", ${id}, "${name}"
+		) ON DUPLICATE KEY UPDATE id= ${id}, name="${name}"`, function (error, results, fields) {
+			if (error) return reject(error);
+			return resolve(results);
+		});
+	});
 }
 
 exports.removeSpecialChannel = function(role) {
+	return new Promise(function(resolve, reject) {
+		connection.query(`DELETE FROM special_channels WHERE role="${role}"`,
+		 function (error, results, fields) {
+			if (error) return reject(error);
+			return resolve(results);
+		});
+	});
+}
 
+exports.getSpecialChannels = function(){
+	return new Promise(function(resolve, reject) {
+		connection.query(`SELECT role, id FROM special_channels`, function (error, results, fields) {
+			if (error) return reject(error);
+			var roles = new Map();
+			for(var i=0; i < results.length; i++){
+				roles[results[i].role] =  results[i].id;
+			}
+			return resolve(roles);
+		});
+	});
 }
 exports.addLog = function(){};
