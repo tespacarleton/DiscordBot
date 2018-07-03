@@ -90,6 +90,13 @@ exports.admin = function(message, args) {
     return;
 }
 
+exports.welcome = function(message, args){
+    message.channel.send(" ", {files: [global.welcomeImage]}).catch(console.error);
+    setTimeout(function(){
+    message.channel.send(`Welcome to the Tespa Carleton Discord Server!\nPlease read the rules in ${rules} and  then introduce yourself in ${introductions}.\nIf you have any questions, do not hesitate to send a direct message to an Executive or Council member!`);}, 1000);
+    return;
+}
+
 exports.welcome_image = function(message, args) {
     if (!args[0]) {
         message.channel.send(`You need arguements for \`${command}\``);
@@ -109,7 +116,7 @@ exports.promote = function(message, args) {
     var id = id_rx.exec(args[0]);
     console.log(id);
     id = id ? id[1] : args[0]
-    console.log(id);
+         console.log(id);
     var user = global.util.getUser({id: id});
     if(user === undefined || global.userList[user.id]>=2){
         message.channel.send(`Cannot promote that user!`)

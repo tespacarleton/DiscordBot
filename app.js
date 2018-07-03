@@ -12,7 +12,7 @@ global.util = require('./util.js');
 global.database = require(`./database.js`);
 global.generator = require(`./generator.js`);
 //Flag
-global.devMode = false;
+global.devMode = true;
 global.enableDB = true;
 global.cleanMode = false;
 global.welcomeMessage = false;
@@ -24,11 +24,11 @@ global.MOD_LEVEL = 1;
 //Admin IDs
 global.userList = {};
 global.specialChannels = {};
-global.GAME_ROLES = [`Starcraft`, `Destiny`, `WoW`, `Rocket League`, `Hearthstone`, `Smash4`, `Melee`, `Smash`,`Overwatch`, `CS:GO`, `Smite`, `Fire Emblem`, `Paladins`, `Pokemon`, `Runescape`, `Tabletop`, `PUBG`, `Rainbow Six Siege`, `DotA`, `HOTS`, `League of Legends`, `Fortnite`, `PS4`, `XBOX`, `Switch`]
+global.GAME_ROLES = [`Rythem`, `Speedrunning`,`Starcraft`, `Destiny`, `WoW`, `Rocket League`, `Hearthstone`, `Smash4`, `Melee`, `Smash`,`Overwatch`, `CS:GO`, `Smite`, `Fire Emblem`, `Paladins`, `Pokemon`, `Runescape`, `Tabletop`, `PUBG`, `Rainbow Six Siege`, `DotA`, `HOTS`, `League of Legends`, `Fortnite`, `PS4`, `XBOX`, `Switch`]
 global.MEMBER_COMMANDS = require('./commands/member.js')
 global.ADMIN_COMMANDS = require('./commands/admin.js');
 global.MOD_COMMANDS = require('./commands/mod.js');
-global.welcomeImage = "https://cdn.discordapp.com/attachments/443848163724623893/443857040683696139/RedditLink.png";
+global.welcomeImage = "https://s26.postimg.cc/8x8hnunux/Reddit_Link.png";
 
 client.on(`ready`, () => {
   console.log(`I am ready!`);
@@ -60,37 +60,6 @@ client.on(`message`, (message) => {
     console.log(`Channel: ` + message.channel.name);
     console.log(`Message: ` + message.content);
     console.log(`Author: ` + message.author.username);
-  }
-   	/*
-   	var myobj = {
-
-   		name: message.author.username,
-   		content: message.content
-   	};*/
-   	//Database Stuff for nerds
-  if(enableDB){
-   	var myobj = {
-      server:
-      {
-        serverID: message.channel.guild.id,
-        serverName: message.channel.guild.name,
-        serverRegion: message.channel.guild.region
-      },
-      channel:
-      {
-        channelID: message.channel.id,
-        channelName: message.channel.name,
-      },
-      author:
-      {
-        username: message.author.username,
-        id: message.author.id,
-        bot: message.author.bot
-      },
-      message: message.content,
-      timestamp: message.createdTimestamp
-		};
-	//database.insert(`messages`, myobj);
 	}
 	// Set prefix
   let prefix = `!`
@@ -155,11 +124,14 @@ client.on(`message`, (message) => {
 
 });
 
-client.on(`error`, e => { console.error(e) })
+client.on(`error`, e => { 
+  console.error(e);
+  client.login(global.token);
+ });
 
 client.on(`guildMemberAdd`,member=>{
   if(welcomeMessage){
-  member.send(" ", {files: [welcomeImage]}).catch(console.error);
+  member.send(" ", {files: [global.welcomeImage]}).catch(console.error);
   setTimeout(function(){
     member.send(`Welcome to the Tespa Carleton Discord Server!\nPlease read the rules in <#${global.specialChannels['rules']}> and  then introduce yourself in <#${global.specialChannels['introductions']}> .\nIf you have any questions, do not hesitate to send a direct message to an Executive or Council member!`);
     }, 1000);
