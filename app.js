@@ -60,37 +60,6 @@ client.on(`message`, (message) => {
     console.log(`Channel: ` + message.channel.name);
     console.log(`Message: ` + message.content);
     console.log(`Author: ` + message.author.username);
-  }
-   	/*
-   	var myobj = {
-
-   		name: message.author.username,
-   		content: message.content
-   	};*/
-   	//Database Stuff for nerds
-  if(enableDB){
-   	var myobj = {
-      server:
-      {
-        serverID: message.channel.guild.id,
-        serverName: message.channel.guild.name,
-        serverRegion: message.channel.guild.region
-      },
-      channel:
-      {
-        channelID: message.channel.id,
-        channelName: message.channel.name,
-      },
-      author:
-      {
-        username: message.author.username,
-        id: message.author.id,
-        bot: message.author.bot
-      },
-      message: message.content,
-      timestamp: message.createdTimestamp
-		};
-	//database.insert(`messages`, myobj);
 	}
 	// Set prefix
   let prefix = `!`
