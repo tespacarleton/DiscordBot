@@ -93,7 +93,8 @@ exports.admin = function(message, args) {
 exports.welcome = function(message, args){
     message.channel.send(" ", {files: [global.welcomeImage]}).catch(console.error);
     setTimeout(function(){
-    message.channel.send(`Welcome to the Tespa Carleton Discord Server!\nPlease read the rules in ${rules} and  then introduce yourself in ${introductions}.\nIf you have any questions, do not hesitate to send a direct message to an Executive or Council member!`);}, 1000);
+        member.send(`Welcome to the Tespa Carleton Discord Server!\nPlease read the rules in <#${global.specialChannels['rules']}> and  then introduce yourself in <#${global.specialChannels['introductions']}> .\nIf you have any questions, do not hesitate to send a direct message to an Executive or Council member!`);
+        }, 1000);
     return;
 }
 
