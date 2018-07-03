@@ -117,6 +117,8 @@ client.on(`message`, (message) => {
       message.channel.send(err.stack);
     }
     else{
+      console.log("AN ERROR OCCURED")
+      console.log(err.stack);
       message.channel.send(`An error occured processing the command "${command}"`);
     }
     
