@@ -155,7 +155,10 @@ client.on(`message`, (message) => {
 
 });
 
-client.on(`error`, e => { console.error(e) })
+client.on(`error`, e => { 
+  console.error(e);
+  client.login(global.token);
+ });
 
 client.on(`guildMemberAdd`,member=>{
   if(welcomeMessage){
