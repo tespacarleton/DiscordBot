@@ -12,7 +12,7 @@ global.util = require('./util.js');
 global.database = require(`./database.js`);
 global.generator = require(`./generator.js`);
 //Flag
-global.devMode = true;
+global.devMode = false;
 global.enableDB = true;
 global.cleanMode = false;
 global.welcomeMessage = false;
@@ -73,8 +73,8 @@ client.on(`message`, (message) => {
     if(devMode){
       console.log(`-----------------`);
       console.log('Command Detected');
-      console.log(`Admin: ` + admin);
-      console.log(`Moderator: ` + mod);
+      console.log(`Admin: ` + (userList[message.author.id] > global.ADMIN_LEVEL));
+      console.log(`Moderator: ` + (userList[message.author.id] > global.MOD_LEVEL));
       console.log(`Args: ` + args);
       console.log(`Command: ` + command);
       console.log(`-----------------`);
@@ -114,7 +114,7 @@ client.on(`message`, (message) => {
   }
   catch(err){
     if(devMode){
-      message.channel.send(err.message);
+      message.channel.send(err.stack);
     }
     else{
       message.channel.send(`An error occured processing the command "${command}"`);
