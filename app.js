@@ -87,7 +87,7 @@ client.on(`message`, (message) => {
     }
   
     //Admin Only tools
-    if (userList[message.author.id] > global.ADMIN_LEVEL){
+    if (userList[message.author.id] >= global.ADMIN_LEVEL){
       if (global.ADMIN_COMMANDS[command] != null){
         global.ADMIN_COMMANDS[command](message, args);
         return;
@@ -95,7 +95,7 @@ client.on(`message`, (message) => {
     }
   
     //Moderator Only tools
-    if (userList[message.author.id] > global.MOD_LEVEL){
+    if (userList[message.author.id] >= global.MOD_LEVEL){
       if (global.MOD_COMMANDS[command] != null){
         if(devMode){
           message.channel.send(`Moderator speaking - everyone better listen up!`);
