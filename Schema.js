@@ -4,18 +4,18 @@ var dataToLog = {
 		serverID: SERVERID,
 		serverName: SERVERNAME,
 		serverRegion: SERVERREGION
-	}
+	},
 	channel:
 	{
 		channelID: CHANNELID,
 		channelName: CHANNELNAME,
-	}
+	},
 	author: 
 	{
 		username: USERNAME,
-		id: ID
+		id: ID,
 		bot: BOTFLAG
-	}
-	message: MESSAGE
+	},
+	message: MESSAGE,
 	timestamp: EPOCH_TIME
 };
