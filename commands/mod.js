@@ -1,31 +1,39 @@
 //Make an announcement
 exports.announcement = function(message, args){
   var channelIdentifier = args.shift();
+  var channel;
   //Check if we are given a channelName or a channelID
+  logger.info(`Attempting to locate channel ${channelIdentifier}`);
   if(channelIdentifier.match(/^[0-9]+$/) != null){
     channel = global.util.getChannel({id: channelIdentifier, type: 'text'});
   }
-  else{
-    channel = global.util.getChannel({channelName: channelIdentifier, type: 'text'});
+  else if(channelIdentifier.match(/^<#[0-9]+>$/) != null){
+    var id_rx = /^<#([0-9]+)>$/g;
+    var id = id_rx.exec(channelIdentifier)[1];
+    channel = global.util.getChannel({id: id, type: 'text'});
   }
-
+  else{
+    channel = undefined;
+  }
+  
   //Channel not found
   if(channel===undefined){
     message.channel.send(`The channel  \`${channelIdentifier}\' wasn't found... please check your spelling!`)
   }
   //Only one channel found
-  if(channel.length===undefined){
+  else if(channel.length===undefined){
+    logger.info(`Sending an announcement to ${channel.name} on behalf of ${message.author.username}`);
     //Images
     var delay = 0;
     //Broken with cleanMode #BUG #TODO
     for (var [snowflake, attachment] of message.attachments) {
       delay++;
-      channel.send(" ", {files: [attachment.url]}).catch(console.error);
+      channel.send(" ", {files: [attachment.url]}).catch(logger.error);
     }
     //Message
     if(args[0]){
       setTimeout(function(){
-        channel.send(args.join(" ")).catch(console.error);
+        channel.send(args.join(" ")).catch(logger.error);
       }, 1000*delay);
     }
   }

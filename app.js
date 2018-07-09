@@ -1,5 +1,4 @@
-//General rule for globals: only admin commands can modify global values.
-
+//General rule for globals: only admin commands can modify global values, but avoid it at all costs
 global.Discord = require(`discord.js`);
 global.client = new Discord.Client();
 client = global.client;
@@ -7,7 +6,6 @@ client = global.client;
 global.token = process.env.DISCORD_TOKEN;
 
 global.util = require('./util.js');
-
 //Local
 global.database = require(`./database.js`);
 global.generator = require(`./generator.js`);
@@ -30,36 +28,51 @@ global.ADMIN_COMMANDS = require('./commands/admin.js');
 global.MOD_COMMANDS = require('./commands/mod.js');
 global.welcomeImage = "https://s26.postimg.cc/8x8hnunux/Reddit_Link.png";
 
+var winston = require('winston');
+
+global.logger = winston.createLogger({
+  level: 'debug',
+  format: winston.format.simple(),
+  transports: [
+    new winston.transports.Console({ level: 'info' }),
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'info.log', level: 'info' }),
+    new winston.transports.File({ filename: 'debug.log' })
+  ]
+});
+
+logger = global.logger;
+
 client.on(`ready`, () => {
-  console.log(`I am ready!`);
+  logger.info(`I am ready!`);
   global.server = global.client.guilds.get(process.env.SERVER_ID);
   if(enableDB){
     global.util.updateUserPermissions();
     global.util.updateSpecialChannels();
-    console.log("Connected to database succesfully");
+    logger.info("Connected to database succesfully");
     
 	}
   if(devMode){
-    console.log('devMode Enabled');
+    logger.info('devMode Enabled');
   }
   if(cleanMode){
-    console.log('cleanMode Enabled');
+    logger.info('cleanMode Enabled');
   }
 });
 
 client.on(`message`, (message) => {
 	//Full Log
   if(devMode){
-    	//console.log(message)
+    	logger.debug(message);
 	}else{
     //Shorthand Log
     if(message.channel != `DMChannel` && message.channel.guild){
-      console.log(`Server: ` + message.channel.guild.name);
+      logger.debug(`Server: ` + message.channel.guild.name);
       //client.channels.get().send(message);
     }
-    console.log(`Channel: ` + message.channel.name);
-    console.log(`Message: ` + message.content);
-    console.log(`Author: ` + message.author.username);
+    logger.debug(`Channel: ` + message.channel.name);
+    logger.debug(`Message: ` + message.content);
+    logger.debug(`Author: ` + message.author.username);
 	}
 	// Set prefix
   let prefix = `!`
@@ -70,20 +83,18 @@ client.on(`message`, (message) => {
   const args = message.content.slice(prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
   try{
-    if(devMode){
-      console.log(`-----------------`);
-      console.log('Command Detected');
-      console.log(`Admin: ` + (userList[message.author.id] > global.ADMIN_LEVEL));
-      console.log(`Moderator: ` + (userList[message.author.id] > global.MOD_LEVEL));
-      console.log(`Args: ` + args);
-      console.log(`Command: ` + command);
-      console.log(`-----------------`);
-    }
+    logger.debug(`-----------------`);
+    logger.debug('Command Detected');
+    logger.debug(`Admin: ` + (userList[message.author.id] > global.ADMIN_LEVEL));
+    logger.debug(`Moderator: ` + (userList[message.author.id] > global.MOD_LEVEL));
+    logger.debug(`Args: ` + args);
+    logger.debug(`Command: ` + command);
+    logger.debug(`-----------------`);
     //Deletes commands when sent
     if(cleanMode && message.channel != `DMChannel`){
       message.delete()
-      .then(msg => console.log(`Deleted message from ${msg.author.username}`))
-      .catch(console.error);
+      .then(msg => logger.info(`Deleted message from ${msg.author.username}`))
+      .catch(logger.error);
     }
   
     //Admin Only tools
@@ -117,8 +128,8 @@ client.on(`message`, (message) => {
       message.channel.send(err.stack);
     }
     else{
-      console.log("AN ERROR OCCURED")
-      console.log(err.stack);
+      logger.error("AN ERROR OCCURED")
+      logger.error(err.stack);
       message.channel.send(`An error occured processing the command "${command}"`);
     }
     
@@ -127,13 +138,13 @@ client.on(`message`, (message) => {
 });
 
 client.on(`error`, e => { 
-  console.error(e);
+  logger.error(e);
   client.login(global.token);
  });
 
 client.on(`guildMemberAdd`,member=>{
   if(welcomeMessage){
-  member.send(" ", {files: [global.welcomeImage]}).catch(console.error);
+  member.send(" ", {files: [global.welcomeImage]}).catch(logger.error);
   setTimeout(function(){
     member.send(`Welcome to the Tespa Carleton Discord Server!\nPlease read the rules in <#${global.specialChannels['rules']}> and  then introduce yourself in <#${global.specialChannels['introductions']}> .\nIf you have any questions, do not hesitate to send a direct message to an Executive or Council member!`);
     }, 1000);

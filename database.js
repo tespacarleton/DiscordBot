@@ -1,3 +1,5 @@
+logger = global.logger;
+
 var mysql = require('mysql');
 var connectionResets = 0;
 var db_config = {
@@ -15,7 +17,7 @@ function handleDisconnect() {
   
 	connection.connect(function(err) {              // The server is either down
 	  if(err) {                                     // or restarting (takes a while sometimes).
-		console.log('error when connecting to db:', err);
+		logger.error('error when connecting to db:', err);
 		setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
 		}     
 		else{
@@ -28,7 +30,7 @@ function handleDisconnect() {
 		if (connectionResets < 5) {				 //try to connect to the db again 5 times at most
 			handleDisconnect();	                      
 		} else {
-			console.log('db error', err); 
+			logger.error('db error', err); 
 			throw err;     
 		}
 	});
@@ -75,7 +77,6 @@ exports.demoteUser = function(user) {
 
 exports.setSpecialChannel = function(role, id, name) {
 	return new Promise(function(resolve, reject) {
-		console.log(id);
 		connection.query(`INSERT INTO special_channels VALUES (
 			"${role}", ${id}, "${name}"
 		) ON DUPLICATE KEY UPDATE id= ${id}, name="${name}"`, function (error, results, fields) {
