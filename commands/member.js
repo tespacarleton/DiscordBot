@@ -1,3 +1,12 @@
+exports.amazon = function (message, args){
+    var res = args[0].match(^(http:\/\/www\.amazon\.ca|https:\/\/www\.amazon\.ca));
+    if(res)
+    message.channel.send(`Affiliate link DMed. Thank you for supporting Tespa Carleton`)
+        message..author.send(`Use this link: ${args[0]}?tag=tespacarleton-20&linkId=discord`);
+    else
+        message.reply(`That is not a proper amazon.ca link ...  Try finding the product here: <http://carleton.gg/amazon>`);
+    return;
+}
 exports.avatar = function(message, args){
     message.reply(`here is the link ${message.author.displayAvatarURL}`);
     return;
