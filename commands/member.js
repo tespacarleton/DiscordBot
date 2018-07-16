@@ -1,5 +1,5 @@
 exports.amazon = function (message, args){
-    var res = args[0].match(^(http:\/\/www\.amazon\.ca|https:\/\/www\.amazon\.ca));
+    var res = args[0].match(\^(http:\/\/www\.amazon\.ca|https:\/\/www\.amazon\.ca)\);
     if(res)
     message.channel.send(`Affiliate link DMed. Thank you for supporting Tespa Carleton`)
         message..author.send(`Use this link: ${args[0]}?tag=tespacarleton-20&linkId=discord`);
@@ -26,7 +26,7 @@ exports.role = function(message, args){
     let role = message.guild.roles.find(`name`, args.join(' '));
     if (GAME_ROLES.indexOf(args.join(' ')) === -1){
     message.channel.send(`Doesn't look like you're allowed to join ${args.join(' ')}.\nFor a full list of joinable roles use \`!role --help\` \nUse \`!role <role_name>\` to join a role \nUse \`!rmrole <role_name>\` to leave a role`)
-    return;
+    return; 
     }
     message.member.addRole(role).catch(console.error);
     //Hack for Smash
