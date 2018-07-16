@@ -2,8 +2,8 @@ exports.amazon = function (message, args){
     var res = args[0].match(/^(http:\/\/www\.amazon\.ca|https:\/\/www\.amazon\.ca)/);
     if(res){
         message.channel.send(`Affiliate link DMed. Thank you for supporting Tespa Carleton`)
-        if(args[0].includes("?"){
-            message.author.send(Use this link: ${args[0]}&tag=tespacarleton-20&linkId=discord``);
+        if(args[0].includes("?")){
+            message.author.send(`Use this link: ${args[0]}&tag=tespacarleton-20&linkId=discord`);
         }else{
             message.author.send(`Use this link: ${args[0]}?tag=tespacarleton-20&linkId=discord`);
         }
