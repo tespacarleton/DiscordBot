@@ -1,4 +1,4 @@
-# TespaCarleton DiscordBot
+# TespaCarleton DiscordBot Setup
 The code for the discord bot for use on the TespaCarleton Server.
 Contact James Fitzgerald or Noah Steinberg to become a contributor or for general questions.
 
@@ -26,7 +26,7 @@ npm install
 
 ## SQL Database Requirements
 In order to use the producting/other databases on HostGator you need to whitelist your IP, and contact the CTO for the credentials.
-Otherwise ensure you have the following env variables:
+Otherwise you will need to have an instance of mySQL to connect to, and ensure you have the following env variables:
     SQL_HOST : host to connect to (likely localhost for dev)
     SQL_PORT : port to connect to on the host
     SQL_USER : user to connect as
@@ -34,7 +34,9 @@ Otherwise ensure you have the following env variables:
     SQL_DATABASE : database to connect to 
     
 ### Tables
+(if table formatting is poor, try viewing raw text)
 ####bot_permissions
+
 +---------------+-------------+------+-----+---------+-------+
 | Field         | Type        | Null | Key | Default | Extra |
 +---------------+-------------+------+-----+---------+-------+
@@ -46,6 +48,7 @@ Otherwise ensure you have the following env variables:
 +---------------+-------------+------+-----+---------+-------+
 
 ####special_channels
+
 +-------+--------------+------+-----+---------+-------+
 | Field | Type         | Null | Key | Default | Extra |
 +-------+--------------+------+-----+---------+-------+
@@ -53,3 +56,48 @@ Otherwise ensure you have the following env variables:
 | id    | varchar(50)  | YES  |     | NULL    |       |
 | name  | varchar(255) | YES  |     | NULL    |       |
 +-------+--------------+------+-----+---------+-------+
+
+# TespaCarleton Discordbot Developer Notes
+
+## Discord API
+Please see the discord.js API and guides located at https://discord.js.org/#/
+## Recommended Setup (CTO current setup)
+
+### Editor: Microsoft Visual Studio Code
+Including addons: Bookmarks, Bracket Pair Colorizer, ESLint, Github build status,
+Gitlens - Git supercharged.
+
+### Node Version 8.9.1
+
+### OS: Windows 10 with Ubuntu Subsystem enabled for Linux testing and mySQL.
+
+## Style and Code Guide 
+
+### File layout
+app.js - base startup and bot logic
+database.js - logic for working with persistent/stored data in the mysql database
+generator.js - logic for providing peronalised error messages to end users
+commands/*.js - logic for all different types of commands. Each file represents commands specific to a role/permission level.
+
+### Function Documentation
+Please document all functions as specified by http://usejsdoc.org/
+Furthermore, feel free to include inline comments to clarify any program logic or longer functions
+
+### Global Variable Usage
+Several global variables are used to keep track of certain configuration values or constants throughout the program.
+As a general rule, global variables should be avoided, but if you must make use of a global, please redefine it as a local
+at the top of the file like
+'''
+logger = global.logger
+'''
+so it is easy to see what globals your module/file depends on.
+
+### Other Style Notes
+Overall, all commits/additions to the code are subject to code review from a developer with merge permissions from the main repo.
+(Usually the CTO or a council member). Before asking for code review you should always keep in mind...
+    Is my code clear?
+    Is my code well commented?
+    Is anything in my code hacky?
+    Is there any errors I haven't accounted for?
+    Have I tested this code on my own?
+If any of these questions is not a resounding yes, you should reconsider asking for code review.
