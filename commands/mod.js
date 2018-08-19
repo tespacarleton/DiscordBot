@@ -1,6 +1,6 @@
 /*
  * Invocation Syntax: !announcement <id> <announcement>
- * Action: Makes announcement to the current chan
+ * Action: Makes announcement to the specified channel
  * @param {DiscordJS Message} message - discord js message
  * @param {string[]} args - args from command (pre split)
  */
@@ -56,7 +56,7 @@ exports.announcement = function(message, args){
 }
 
 /*
- * Invocation Syntax: !mod>
+ * Invocation Syntax: !mod
  * Action: List mod commands
  * @param {DiscordJS Message} message - discord js message
  * @param {string[]} args - args from command (pre split)
