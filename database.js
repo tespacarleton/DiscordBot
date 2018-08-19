@@ -10,7 +10,10 @@ var db_config = {
   database : process.env.SQL_DATABASE
 }
 var connection;
-
+/*
+ * Entry Condition: The Remote SQL Server is Disconnected
+ * Action: Attempt to establish connection to databse
+ */
 function handleDisconnect() {
 	connection = mysql.createConnection(db_config); // Recreate the connection, since
 													// the old one cannot be reused.
@@ -37,7 +40,10 @@ function handleDisconnect() {
   }
   
 handleDisconnect();
-
+/*
+ * Entry Condition: Bot has just started, or has updated user info
+ * Action: Retrieve current user data from the database
+ */
 exports.getUsers = function() {
 	return new Promise(function(resolve, reject) {
 		connection.query(`SELECT id, permissions FROM bot_permissions`, function (error, results, fields) {
@@ -51,6 +57,11 @@ exports.getUsers = function() {
 	});
 };
 
+/*
+ * Entry Condition: Promote user command has been issued
+ * Action: Increase user's permission level
+ * @param {DiscordJS User} user - user to promote
+ */
 exports.promoteUser = function(user) {
 	return new Promise(function(resolve, reject) {
 		connection.query(
@@ -64,6 +75,11 @@ exports.promoteUser = function(user) {
 	});
 }
 
+/*
+ * Entry Condition: Demote user command has been issued
+ * Action: Decrease user's permission level
+ * @param {DiscordJS User} user - user to demote
+ */
 exports.demoteUser = function(user) {
 	return new Promise(function(resolve, reject) {
 		connection.query(`UPDATE bot_permissions SET permissions=permissions-1 WHERE 
@@ -74,7 +90,13 @@ exports.demoteUser = function(user) {
 		});
 	});
 }
-
+/*
+ * Entry Condition: Set special channel command has been issued
+ * Action: Set special channel information in database
+ * @param {string} role - channel role
+ * @param {string} id - channel id
+ * @param {string} name - channel name
+ */
 exports.setSpecialChannel = function(role, id, name) {
 	return new Promise(function(resolve, reject) {
 		connection.query(`INSERT INTO special_channels VALUES (
@@ -85,7 +107,11 @@ exports.setSpecialChannel = function(role, id, name) {
 		});
 	});
 }
-
+/*
+ * Entry Condition: Remove special channel command has been issued
+ * Action: Remove special channel information in database
+ * @param {string} role - channel role to remove
+ */
 exports.removeSpecialChannel = function(role) {
 	return new Promise(function(resolve, reject) {
 		connection.query(`DELETE FROM special_channels WHERE role="${role}"`,
@@ -95,7 +121,10 @@ exports.removeSpecialChannel = function(role) {
 		});
 	});
 }
-
+/*
+ * Entry Condition: Bot has started or special channel information has been updated
+ * Action: Get the special channel information
+ */
 exports.getSpecialChannels = function(){
 	return new Promise(function(resolve, reject) {
 		connection.query(`SELECT role, id FROM special_channels`, function (error, results, fields) {

@@ -1,4 +1,9 @@
-//Make an announcement
+/*
+ * Invocation Syntax: !announcement <id> <announcement>
+ * Action: Makes announcement to the current chan
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
 exports.announcement = function(message, args){
   var channelIdentifier = args.shift();
   var channel;
@@ -50,7 +55,12 @@ exports.announcement = function(message, args){
   return;
 }
 
-//List mod commands
+/*
+ * Invocation Syntax: !mod>
+ * Action: List mod commands
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
 exports.mod = function(message, args){
   message.channel.send(`Here are some things I can help you with as an moderator: \n${global.util.listToString(Object.keys(exports))}`);
   return;

@@ -1,9 +1,12 @@
 //generator.js
-
 /*
-List of context:
-Command not found
-Greeting
+ * Entry Condition: Bot is checking if a user-friendly message generator exists
+ * Action: Sends a user-friendly error messages
+ * @param {string} context - type of generator to use
+ * @param {string} value - value to insert into message (optional)
+ * List of contexts:
+ *  Command not found
+ * 	Greeting
 */
 exports.message = function(context, value=undefined){
 	var response = ``;

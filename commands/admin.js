@@ -1,3 +1,13 @@
+/*
+ * Invocation Syntax: !channel [list|set|remove] [role] [id]
+ * Actions: 
+ *  list: List all channels
+ *  set: Set channel <role> for the specified <id>
+ *  remove: Remove channel <role>
+ *  none: Display current channel info
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
 exports.channel = function(message, args) {
     if (args[0] === 'list') {
         //TODO
@@ -38,12 +48,24 @@ exports.channel = function(message, args) {
     return;
 }
 
+/*
+ * Invocation Syntax: !emotelist
+ * Action: Lists all emotes
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
 exports.emotelist = function(message, args) {
     const emojiList = message.guild.emojis.map(e => e.toString()).join(` `);
     message.channel.send(emojiList);
     return;
 }  
 
+/*
+ * Invocation Syntax: !devmode
+ * Action: Toggles devmode
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
 exports.devmode = function(message, args) {
     if (global.devMode) {
         logger.info(`devmode disabled`);
@@ -57,7 +79,12 @@ exports.devmode = function(message, args) {
     }
     return;
 }
-
+/*
+ * Invocation Syntax: !cleanmode
+ * Action: Toggles cleanmode
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
 exports.cleanmode = function(message, args) {
     if (global.cleanMode) {
         logger.info(`cleanmode disabled`);
@@ -72,6 +99,12 @@ exports.cleanmode = function(message, args) {
     return;
 }
 
+/*
+ * Invocation Syntax: !status
+ * Action: Displays configuration info
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
 exports.status = function(message, args) {
     if (!global.cleanMode) {
         message.channel.send(`**Status:** \nDev Mode: \`${global.devMode}\`\nClean Mode: \`${global.cleanMode}\`\nDatabase Connection: \`${global.enableDB}\`\nWelcome Message: \`${global.welcomeMessage}\``);
@@ -82,6 +115,12 @@ exports.status = function(message, args) {
     return;
 }
 
+/*
+ * Invocation Syntax: !welcome_message
+ * Action: Toggles welcome message
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
 exports.welcome_message = function(message, args) {
     if (global.welcomeMessage) {
         logger.info(`welcome message disabled`);
@@ -96,11 +135,23 @@ exports.welcome_message = function(message, args) {
     return;
 }
 
+/*
+ * Invocation Syntax: !admin
+ * Action: Displays admin commands
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
 exports.admin = function(message, args) {
     message.channel.send(`Here are some things I can help you with as an admin: \n${global.util.listToString(Object.keys(exports))}`);
     return;
 }
 
+/*
+ * Invocation Syntax: !welcome
+ * Action: Sends welcome message
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
 exports.welcome = function(message, args){
     message.channel.send(" ", {files: [global.welcomeImage]}).catch(logger.error);
     setTimeout(function(){
@@ -109,9 +160,15 @@ exports.welcome = function(message, args){
     return;
 }
 
+/*
+ * Invocation Syntax: !welcome_image <image>
+ * Action: Sets welcome image to <image>
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
 exports.welcome_image = function(message, args) {
     if (!args[0]) {
-        message.channel.send(`You need arguements for \`${command}\``);
+        message.channel.send(`You need arguments for \`${command}\``);
         return;
     }
     global.welcomeImage = args[0];
@@ -119,6 +176,12 @@ exports.welcome_image = function(message, args) {
     return;
 }
 
+/*
+ * Invocation Syntax: !promote <user>
+ * Action: Promotes the user id specified
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
 exports.promote = function(message, args) {
     if (!args[0]) {
         message.channel.send(`You need arguments for promote!`);
@@ -144,7 +207,12 @@ exports.promote = function(message, args) {
         }
     );
 }
-
+/*
+ * Invocation Syntax: !demote <user>
+ * Action: Demotes the user id specified
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
 exports.demote = function(message, args) {
     if (!args[0]) {
         message.channel.send(`You need arguments for demote!`);

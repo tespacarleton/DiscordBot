@@ -42,7 +42,10 @@ global.logger = winston.createLogger({
 });
 
 logger = global.logger;
-
+/*
+ * Entry Condition: The DiscordJS bot is ready to start working
+ * Action: Connect to the database, and get static information
+ */
 client.on(`ready`, () => {
   logger.info(`I am ready!`);
   global.server = global.client.guilds.get(process.env.SERVER_ID);
@@ -59,7 +62,11 @@ client.on(`ready`, () => {
     logger.info('cleanMode Enabled');
   }
 });
-
+/*
+ * Entry Condition: The bot receives a message
+ * Action: Handle the message
+ * @param {DiscordJS Message} message - the relevant message object
+ */
 client.on(`message`, (message) => {
 	//Full Log
   if(devMode){
@@ -123,6 +130,7 @@ client.on(`message`, (message) => {
     }
     message.channel.send(`${generator.message(`Command Not Found`,command)}`)
   }
+  // For catching any uncaught errors
   catch(err){
     if(devMode){
       message.channel.send(err.stack);
@@ -136,12 +144,18 @@ client.on(`message`, (message) => {
   }
 
 });
-
+/*
+ * Entry Condition: DiscordJS encounters a fatal error
+ * Action: Logs the error, and attempts to reconnect
+ */
 client.on(`error`, e => { 
   logger.error(e);
   client.login(global.token);
  });
-
+/*
+ * Entry Condition: A user connects to a server
+ * Action: Sends a welcome message
+ */
 client.on(`guildMemberAdd`,member=>{
   if(welcomeMessage){
   member.send(" ", {files: [global.welcomeImage]}).catch(logger.error);
