@@ -27,7 +27,7 @@ exports.announcement = function(message, args){
   }
   //Only one channel found
   else if(channel.length===undefined){
-    logger.info(`Sending an announcement to ${channel.name} on behalf of ${message.author.username}`);
+    logger.info(`Sending an announcement to ${channel} (${channel.name}) on behalf of ${message.author.id} (${message.author.username})`);
     //Images
     var delay = 0;
     //Broken with cleanMode #BUG #TODO

@@ -1,5 +1,19 @@
 //General rule for globals: only admin commands can modify global values, but avoid it at all costs
+//logger is the first thing declared so everyone can use it
+var winston = require('winston');
+global.logger = winston.createLogger({
+  level: 'debug',
+  format: winston.format.simple(),
+  transports: [
+    new winston.transports.Console({ level: 'info' }),
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'info.log', level: 'info' }),
+    new winston.transports.File({ filename: 'debug.log' })
+  ]
+});
+
 global.Discord = require(`discord.js`);
+
 global.client = new Discord.Client();
 client = global.client;
 // The token of your bot - https://discordapp.com/developers/applications/me
@@ -23,23 +37,11 @@ global.MOD_LEVEL = 1;
 global.userList = {};
 global.specialChannels = {};
 global.GAME_ROLES = [`Rythem`, `Speedrunning`,`Starcraft`, `Destiny`, `WoW`, `Rocket League`, `Hearthstone`, `Smash4`, `Melee`, `Smash`,`Overwatch`, `CS:GO`, `Smite`, `Fire Emblem`, `Paladins`, `Pokemon`, `Runescape`, `Tabletop`, `PUBG`, `Rainbow Six Siege`, `DotA`, `HOTS`, `League of Legends`, `Fortnite`, `PS4`, `XBOX`, `Switch`]
-global.MEMBER_COMMANDS = require('./commands/member.js')
+global.MEMBER_COMMANDS = require('./commands/member.js');
 global.ADMIN_COMMANDS = require('./commands/admin.js');
 global.MOD_COMMANDS = require('./commands/mod.js');
 global.welcomeImage = "https://s26.postimg.cc/8x8hnunux/Reddit_Link.png";
 
-var winston = require('winston');
-
-global.logger = winston.createLogger({
-  level: 'debug',
-  format: winston.format.simple(),
-  transports: [
-    new winston.transports.Console({ level: 'info' }),
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'info.log', level: 'info' }),
-    new winston.transports.File({ filename: 'debug.log' })
-  ]
-});
 
 logger = global.logger;
 /*
@@ -52,8 +54,7 @@ client.on(`ready`, () => {
   if(enableDB){
     global.util.updateUserPermissions();
     global.util.updateSpecialChannels();
-    logger.info("Connected to database succesfully");
-    
+    logger.info("Synced to database successfully");
 	}
   if(devMode){
     logger.info('devMode Enabled');

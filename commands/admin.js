@@ -192,18 +192,22 @@ exports.promote = function(message, args) {
     id = id ? id[1] : args[0];
     var user = global.util.getUser({id: id});
     logger.info(`Locating user ${id}`);
-    if(user === undefined || global.userList[user.id]>=2){
-        message.channel.send(`Cannot promote that user!`);
+    if(global.userList[user.id]>=2){
+        message.channel.send(`User already has max permissions!`);
+        return;
+    }
+    else if(user === undefined){
+        message.channel.send(`User not found!`);
         return;
     }
     logger.info(`Promoting ${user.username}`);
     global.database.promoteUser(user).then(
         function(results){
-            global.util.updateUserPermissions(message.channel, `Successfully promoted ${user}`);
+            global.util.updateUserPermissions(message.channel, `Successfully promoted ${user} to permission level ${global.userList[user.id]}`);
         }).catch(
         function(reason){
             logger.error(reason);
-            message.channel.send(`Update Failed, see system logs`);
+            message.channel.send(`Promotion Failed, see system logs`);
         }
     );
 }
@@ -223,8 +227,16 @@ exports.demote = function(message, args) {
     id = id ? id[1] : args[0];
     var user = global.util.getUser({id: id});
     logger.info(`Locating user ${id}`);
-    if(user === undefined || global.userList[user.id] === undefined || global.userList[user.id]>=3 || global.userList[user.id]<=0){
-        message.channel.send(`Cannot demote that user!`);
+    if(global.userList[user.id] === undefined || global.userList[user.id]<=0){
+        message.channel.send(`That user cannot be demoted further!`);
+        return;
+    }
+    else if(global.userList[user.id]>=3){
+        message.channel.send(`That user cannot be demoted!`);
+        return;
+    }
+    else if(user === undefined){
+        message.channel.send(`User not found!`);
         return;
     }
     logger.info(`Demoting ${user.username}`);
@@ -234,7 +246,7 @@ exports.demote = function(message, args) {
         }).catch(
         function(reason){
             logger.error(reason);
-            message.channel.send(`Update Failed, see system logs`);
+            message.channel.send(`Demotion Failed, see system logs`);
         }
     );
     return;
