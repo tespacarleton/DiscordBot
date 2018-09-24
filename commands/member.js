@@ -29,20 +29,27 @@ exports.role = function(message, args){
         message.channel.send(`**These are game roles you're allowed to join:** \n${global.util.listToString(global.GAME_ROLES)} \nUse \`!role <role_name>\` to join a role \nUse \`!rmrole <role_name>\` to leave a role`)
         return;
     }
-    
-    let role = message.guild.roles.find(`name`, args.join(' '));
-    logger.info(`${message.member.username} attempting to join role ${role}`);
-    if (GAME_ROLES.indexOf(args.join(' ')) === -1){
-        message.channel.send(`Doesn't look like you're allowed to join ${args.join(' ')}.\nFor a full list of joinable roles use \`!role --help\` \nUse \`!role <role_name>\` to join a role \nUse \`!rmrole <role_name>\` to leave a role`)
+    var input_role = args.join(' ');
+    var role = undefined;
+    for(var i = 0; i < GAME_ROLES.length; i++){
+        if(GAME_ROLES[i].toLowerCase()===input_role.toLowerCase()){
+            role = GAME_ROLES[i];
+            break;
+        }
+    }
+    if (role===undefined){
+        message.channel.send(`Doesn't look like you're allowed to join ${args.join(' ')}, or it doesn't exist!\nFor a full list of joinable roles use \`!role --help\` \nUse \`!role <role_name>\` to join a role \nUse \`!rmrole <role_name>\` to leave a role`)
         return;
     }
-    message.member.addRole(role).catch(logger.error);
+    role = message.guild.roles.find(`name`, role);
+    logger.info(`${message.author.username} attempting to join role ${role.name}`);
+    message.member.addRole(role);
     //Hack for Smash
     if(args[0] === `Smash4` || args[0] === `Melee`){
-        message.member.addRole(`Smash`).catch(logger.error);
+        message.member.addRole(`Smash`);
     }
 
-    message.channel.send(`You've been added to: ${args.join(' ') }!` );
+    message.channel.send(`You've been added to: ${role.name}` );
     return
 }
 
@@ -53,15 +60,25 @@ exports.role = function(message, args){
  * @param {string[]} args - args from command (pre split)
  */
 exports.rmrole = function(message, args){
-    let role = message.guild.roles.find(`name`, args.join(' '));
-    logger.info(`${message.member.username} leaving role ${role}`);
-    if (role){
-        message.member.removeRole(role).catch(logger.error);
-        message.channel.send(`Your are no longer a member of: ${args.join(' ') }... \nSorry to see you go` );
+    var input_role = args.join(' ');
+    var role = undefined;
+    for(var i = 0; i < GAME_ROLES.length; i++){
+        if(GAME_ROLES[i].toLowerCase()===input_role.toLowerCase()){
+            role = GAME_ROLES[i];
+            break;
+        }
+    }
+    if (role===undefined){
+        message.channel.send(`I can't find the role ${input_role}.\nAre you sure that is the name of the role you want to remove?\nUse \`!role <role_name>\` to join a role \nUse \`!rmrole <role_name>\` to leave a role`)
         return
     }
-        message.channel.send(`I can't find the role ${args.join(' ')}.\nAre you sure that is the name of the role you want to remove?\nUse \`!role <role_name>\` to join a role \nUse \`!rmrole <role_name>\` to leave a role`)
+    role = message.guild.roles.find(`name`, role);
+    logger.info(`User ${message.author.username} leaving role ${role}`);
+    if (role){
+        message.member.removeRole(role).catch(logger.error);
+        message.channel.send(`Your are no longer a member of: ${role.name}... \nSorry to see you go` );
         return
+    }
 }
 
 /*
