@@ -189,17 +189,20 @@ exports.promote = function(message, args) {
     }
     var id_rx = /^<@([0-9]+)>$/g;
     var id = id_rx.exec(args[0]);
+    logger.info(`***${id}***`);
     id = id ? id[1] : args[0];
+    logger.info(`***${id}***`);    
     var user = global.util.getUser({id: id});
     logger.info(`Locating user ${id}`);
-    if(global.userList[user.id]>=2){
-        message.channel.send(`User already has max permissions!`);
-        return;
-    }
-    else if(user === undefined){
+    if(user === undefined){
         message.channel.send(`User not found!`);
         return;
     }
+    else if(global.userList[user.id]>=2){
+        message.channel.send(`User already has max permissions!`);
+        return;
+    }
+    
     logger.info(`Promoting ${user.username}`);
     global.database.promoteUser(user).then(
         function(results){
@@ -227,7 +230,11 @@ exports.demote = function(message, args) {
     id = id ? id[1] : args[0];
     var user = global.util.getUser({id: id});
     logger.info(`Locating user ${id}`);
-    if(global.userList[user.id] === undefined || global.userList[user.id]<=0){
+    if(user === undefined){
+        message.channel.send(`User not found!`);
+        return;
+    }
+    else if(global.userList[user.id] === undefined || global.userList[user.id]<=0){
         message.channel.send(`That user cannot be demoted further!`);
         return;
     }
@@ -235,10 +242,7 @@ exports.demote = function(message, args) {
         message.channel.send(`That user cannot be demoted!`);
         return;
     }
-    else if(user === undefined){
-        message.channel.send(`User not found!`);
-        return;
-    }
+    
     logger.info(`Demoting ${user.username}`);
     global.database.demoteUser(user).then(
         function(results){
