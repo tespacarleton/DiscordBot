@@ -187,7 +187,7 @@ exports.promote = function(message, args) {
         message.channel.send(`You need arguments for promote!`);
         return;
     }
-    var id_rx = /^<@([0-9]+)>$/g;
+    var id_rx = /^<@[!]([0-9]+)>$/g;
     var id = id_rx.exec(args[0]);
     logger.info(`***${id}***`);
     id = id ? id[1] : args[0];
@@ -225,7 +225,7 @@ exports.demote = function(message, args) {
         message.channel.send(`You need arguments for demote!`);
         return;
     }
-    var id_rx = /^<@([0-9]+)>$/g;
+    var id_rx = /^<@[!]([0-9]+)>$/g;
     var id = id_rx.exec(args[0]);
     id = id ? id[1] : args[0];
     var user = global.util.getUser({id: id});
