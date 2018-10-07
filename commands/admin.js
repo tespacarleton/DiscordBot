@@ -189,9 +189,7 @@ exports.promote = function(message, args) {
     }
     var id_rx = /^<@[!]([0-9]+)>$/g;
     var id = id_rx.exec(args[0]);
-    logger.info(`***${id}***`);
     id = id ? id[1] : args[0];
-    logger.info(`***${id}***`);    
     var user = global.util.getUser({id: id});
     logger.info(`Locating user ${id}`);
     if(user === undefined){
