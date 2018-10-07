@@ -15,7 +15,7 @@ var connection;
  * Action: Attempt to establish connection to databse
  */
 function handleDisconnect() {
-	logger.info(`Connecting to database with parameters:\n ${JSON.stringify(db_config)}`);
+	
 	connection = mysql.createConnection(db_config); // Recreate the connection, since
 													// the old one cannot be reused.
   
@@ -25,7 +25,6 @@ function handleDisconnect() {
 		setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
 		}     
 		else{
-			logger.info("Connected to database succesfully");
 			connectionResets = 0;
 		}                                // to avoid a hot loop, and to allow our node script to
 	});                                     // process asynchronous requests in the meantime.
@@ -35,12 +34,11 @@ function handleDisconnect() {
 		if (connectionResets < 5) {				 //try to connect to the db again 5 times at most
 			handleDisconnect();	                      
 		} else {
-			logger.error('Could not reset database connection', err); 
 			throw err;     
 		}
 	});
   }
-  
+logger.info(`Connecting to database with parameters: ${JSON.stringify(db_config)}`);
 handleDisconnect();
 /*
  * Entry Condition: Bot has just started, or has updated user info

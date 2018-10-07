@@ -1,14 +1,23 @@
 //General rule for globals: only admin commands can modify global values, but avoid it at all costs
 //logger is the first thing declared so everyone can use it
-var winston = require('winston');
-global.logger = winston.createLogger({
+const { createLogger, format, transports } = require('winston');
+const { combine, timestamp, label, printf } = format;
+
+const myFormat = printf(info => {
+  return `[${info.timestamp}] ${info.level}: ${info.message}`;
+});
+
+global.logger = createLogger({
   level: 'debug',
-  format: winston.format.simple(),
+  format: combine(
+    timestamp(),
+    myFormat
+  ),
   transports: [
-    new winston.transports.Console({ level: 'info' }),
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'info.log', level: 'info' }),
-    new winston.transports.File({ filename: 'debug.log' })
+    new transports.Console({ level: 'info'}),
+    new transports.File({ filename: 'error.log', level: 'error'}),
+    new transports.File({ filename: 'info.log', level: 'info'}),
+    new transports.File({ filename: 'debug.log'})
   ]
 });
 
