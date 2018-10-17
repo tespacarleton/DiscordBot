@@ -73,7 +73,7 @@ exports.rmrole = function(message, args){
         return
     }
     role = message.guild.roles.find(`name`, role);
-    logger.info(`User ${message.author.username} leaving role ${role}`);
+    logger.info(`User ${message.author.username} leaving role ${role.name}`);
     if (role){
         message.member.removeRole(role).catch(logger.error);
         message.channel.send(`Your are no longer a member of: ${role.name}... \nSorry to see you go` );
