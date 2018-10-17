@@ -146,7 +146,7 @@ client.on(`message`, (message) => {
       message.channel.send(err.stack);
     }
     else{
-      logger.error("AN ERROR OCCURED")
+      logger.error(`AN ERROR OCCURED DURING "${command}"`)
       logger.error(err.stack);
       message.channel.send(`An error occured processing the command "${command}"`);
     }
@@ -159,8 +159,8 @@ client.on(`message`, (message) => {
  * Action: Logs the error, and attempts to reconnect
  */
 client.on(`error`, e => { 
+  logger.error("Fatal DiscordJS error");
   logger.error(e);
-  client.login(global.token);
  });
 /*
  * Entry Condition: A user connects to a server
@@ -168,6 +168,7 @@ client.on(`error`, e => {
  */
 client.on(`guildMemberAdd`,member=>{
   if(welcomeMessage){
+  logger.info("Sending welcome message");
   member.send(" ", {files: [global.welcomeImage]}).catch(logger.error);
   setTimeout(function(){
     member.send(`Welcome to the Tespa Carleton Discord Server!\nPlease read the rules in <#${global.specialChannels['rules']}> and  then introduce yourself in <#${global.specialChannels['introductions']}> .\nIf you have any questions, do not hesitate to send a direct message to an Executive or Council member!`);

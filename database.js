@@ -34,6 +34,7 @@ function handleDisconnect() {
 		if (connectionResets < 5) {				 //try to connect to the db again 5 times at most
 			handleDisconnect();	                      
 		} else {
+			logger.error("Could not establish database connection");
 			throw err;     
 		}
 	});
