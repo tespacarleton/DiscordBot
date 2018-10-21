@@ -15,7 +15,6 @@ var connection;
  * Action: Attempt to establish connection to databse
  */
 function handleDisconnect() {
-	
 	connection = mysql.createConnection(db_config); // Recreate the connection, since
 													// the old one cannot be reused.
   
