@@ -146,8 +146,10 @@ client.on(`message`, (message) => {
       message.channel.send(err.stack);
     }
     else{
-      logger.error(`AN ERROR OCCURED DURING "${command}"`)
-      logger.error(err.stack);
+      err_msg = `AN ERROR OCCURED DURING "${command}" FROM ${message.author}
+      ${err.stack}`
+      logger.error(err_msg);
+      util.logToServer(err_msg);
       message.channel.send(`An error occured processing the command "${command}"`);
     }
     
