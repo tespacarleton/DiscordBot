@@ -1,5 +1,6 @@
 client = global.client;
 server = global.server;
+logger = global.logger;
 
 exports.remove = function(array, element) {
     const index = array.indexOf(element);
@@ -117,7 +118,7 @@ exports.getChannel = function(options={id: undefined, channelName: undefined, ty
 
 exports.getUsers = function(){
     //Get the useful user object with the data we need, in a list
-    members = global.server.members;
+    members = server.members;
     users = [];
     members.forEach(function(member, index, arr) {
         users.push(member.user);
@@ -132,7 +133,7 @@ exports.getChannels = function(){
     members.forEach(function(channel, index, arr) {
         channels.push(channel.user);
     });
-    return users;
+    return channels;
 };
 
 exports.updateUserPermissions = function(callbackChannel=undefined, msg=undefined){
@@ -142,7 +143,10 @@ exports.updateUserPermissions = function(callbackChannel=undefined, msg=undefine
       if(callbackChannel !== undefined && msg !== undefined){
           callbackChannel.send(msg);
       }
-    });
+    })
+    .catch(function(e) {
+        console.log("handled error");
+    });;
 }
 
 exports.updateSpecialChannels = function(callbackChannel=undefined, msg=undefined){
@@ -152,5 +156,17 @@ exports.updateSpecialChannels = function(callbackChannel=undefined, msg=undefine
       if(callbackChannel !== undefined && msg !== undefined){
           callbackChannel.send(msg);
       }
+    })
+    .catch(function(e) {
+        console.log("handled error");
     });
+}
+
+exports.logToServer = function(msg, level=undefined){
+    if('log' in global.specialChannels){
+        global.server.channels.get(global.specialChannels['log']).send(msg);
+    }
+    else{
+        logger.warn("Please set a server 'log' channel in order to maximize usage of bot features");
+    }
 }

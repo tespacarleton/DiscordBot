@@ -78,7 +78,7 @@ client.on(`ready`, () => {
  * @param {DiscordJS Message} message - the relevant message object
  */
 client.on(`message`, (message) => {
-	//Full Log
+  //Full Log
   if(devMode){
     	logger.debug(message);
 	}else{
@@ -135,7 +135,11 @@ client.on(`message`, (message) => {
     
     //Everybody tools
     if (global.MEMBER_COMMANDS[command] != null){
-      global.MEMBER_COMMANDS[command](message, args);
+      var id_rx = /<@[&,!]?([0-9]+)>/g;
+      var id = id_rx.exec(message.content);
+      if(!id && !(message.content.includes("@everyone"))){
+        global.MEMBER_COMMANDS[command](message, args);
+      }
       return;
     }
     message.channel.send(`${generator.message(`Command Not Found`,command)}`)
@@ -146,27 +150,52 @@ client.on(`message`, (message) => {
       message.channel.send(err.stack);
     }
     else{
-      logger.error(`AN ERROR OCCURED DURING "${command}"`)
-      logger.error(err.stack);
+      err_msg = `AN ERROR OCCURED DURING "${command}" FROM ${message.author}
+      ${err.stack}`
+      logger.error(err_msg);
+      util.logToServer(err_msg);
       message.channel.send(`An error occured processing the command "${command}"`);
     }
     
   }
 
 });
+
 /*
- * Entry Condition: DiscordJS encounters a fatal error
- * Action: Logs the error, and attempts to reconnect
+ * Entry Condition: DiscordJS recieves a "deleted message" signal
+ * Action: Log the metadata about the message, and the message itself
  */
-client.on(`error`, e => { 
-  logger.error("Fatal DiscordJS error");
-  logger.error(e);
+ client.on(`messageDelete`, message => {
+  attachments = message.attachments.array().length!=0 ? "Yes" : "No";
+  util.logToServer(`The following message was deleted:
+    Id: ${message.id}
+    Author: ${message.author}
+    Content: "${message}"
+    Attachments: ${attachments}`);
  });
+
+/*
+ * Entry Condition: DiscordJS recieves an "updated message" signal
+ * Action: log the metadata and content of the old and new message
+ */
+client.on(`messageUpdate`, (oldMessage, newMessage) => {
+  attachments = oldMessage.attachments.array().length!=0 ? "Yes" : "No";
+  util.logToServer(`The following message was updated:
+    Id: ${newMessage.id}
+    Author: ${oldMessage.author}
+    Attachments: ${attachments}
+    Old Content: "${oldMessage}"
+    New Content: "${newMessage}"`
+   );
+});
 /*
  * Entry Condition: A user connects to a server
  * Action: Sends a welcome message
  */
 client.on(`guildMemberAdd`,member=>{
+  util.logToServer(`A new user has joined! :)
+  User: ${member}
+  Id: ${member.id}`);
   if(welcomeMessage){
   logger.info("Sending welcome message");
   member.send(" ", {files: [global.welcomeImage]}).catch(logger.error);
@@ -176,4 +205,23 @@ client.on(`guildMemberAdd`,member=>{
   }
 });
 
+/*
+ * Entry Condition: A user leaves the server
+ * Action: Log the user leaving the server
+ */
+client.on(`guildMemberRemove`, member=> {
+  util.logToServer(`A user has left... :(
+  User: ${member}
+  Id: ${member.id}`);
+});
+
+/*
+ * Entry Condition: DiscordJS encounters a fatal error
+ * Action: Logs the error, and attempts to reconnect
+ */
+client.on(`error`, e => { 
+  logger.error("Fatal DiscordJS error");
+  logger.error(e.stack);
+  logger.error(e);
+ });
 client.login(global.token);
