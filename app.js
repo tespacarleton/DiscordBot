@@ -137,7 +137,8 @@ client.on(`message`, (message) => {
     if (global.MEMBER_COMMANDS[command] != null){
       var id_rx = /<@[&,!]?([0-9]+)>/g;
       var id = id_rx.exec(message.content);
-      if(!id && !(message.content.includes("@everyone"))){
+      if(!id && !(message.content.includes("@everyone")) &&
+          !(message.content.includes("@here"))){
         global.MEMBER_COMMANDS[command](message, args);
       }
       return;
