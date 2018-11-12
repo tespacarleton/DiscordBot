@@ -135,7 +135,11 @@ client.on(`message`, (message) => {
     
     //Everybody tools
     if (global.MEMBER_COMMANDS[command] != null){
-      global.MEMBER_COMMANDS[command](message, args);
+      var id_rx = /<@[&,!]?([0-9]+)>/g;
+      var id = id_rx.exec(message.content);
+      if(!id && !(message.content.includes("@everyone"))){
+        global.MEMBER_COMMANDS[command](message, args);
+      }
       return;
     }
     message.channel.send(`${generator.message(`Command Not Found`,command)}`)
