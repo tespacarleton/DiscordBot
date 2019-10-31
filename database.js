@@ -57,6 +57,10 @@ exports.getUsers = function() {
 		});
 	});
 };
+/*
+ * Entry Condition: Bot has just started, or has updated user info
+ * Action: Retrieve current Role data from the database
+ */
 exports.getRoles = function() {
 	return new Promise(function(resolve, reject) {
 		connection.query(`SELECT RoleName FROM RoleList`, function (error, results, fields) {
