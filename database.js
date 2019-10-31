@@ -46,11 +46,24 @@ handleDisconnect();
  */
 exports.getUsers = function() {
 	return new Promise(function(resolve, reject) {
-		connection.query(`SELECT id, permissions FROM bot_permissions`, function (error, results, fields) {
+		connection.query(`SELECT DiscordID, Permissions FROM DiscordUser`, function (error, results, fields) {
+			
 			if (error) return reject(error);
 			var ids = new Map();
 			for(var i=0; i < results.length; i++){
-				ids[results[i].id] =  results[i].permissions;
+				ids[results[i].DiscordID] =  results[i].Permissions;
+			}
+			return resolve(ids);
+		});
+	});
+};
+exports.getRoles = function() {
+	return new Promise(function(resolve, reject) {
+		connection.query(`SELECT RoleName FROM RoleList`, function (error, results, fields) {
+			if (error) return reject(error);
+			var ids = [];
+			for(var i=0; i < results.length; i++){
+				ids[i] =  results[i].RoleName;
 			}
 			return resolve(ids);
 		});
