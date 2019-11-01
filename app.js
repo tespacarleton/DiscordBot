@@ -46,8 +46,7 @@ global.MOD_LEVEL = 1;
 global.userList = {};
 global.specialChannels = {};
 roleList = global.database.getRoles();
-roleList.then(function(result)
-{
+roleList.then(function(result){
   global.GAME_ROLES = result;
 })
 
@@ -231,10 +230,94 @@ client.on(`error`, e => {
   logger.error(e);
  });
 
+//CODE BELOW IS FOR AN OLDER VERSION OF DISCORD'S API
+
+// /*
+//  * Entry Condition: user reacts to a message
+//  * Action: Adds role to user based on emoji used to react
+//  */
+//  client.on(`raw`, e => { 
+//    console.log(e);
+//    var eventName = e.t;
+//    if (eventName === 'MESSAGE_REACTION_ADD')
+//    {
+//      if (e.d.message_id === '639587109098749965')
+//      {
+//        var reactionChannel = client.channels.get(e.d.channel_id);
+//       //  reactionChannel.fetchMessage(e.d.message_id).then(function(result){
+//       //   console.log(result.emoji);
+//       // })
+//        if(reactionChannel.messages.has(e.d.message_id)) // If message is cached
+//        {
+//          return;
+//        }
+//        else // Cache message
+//        {
+//         reactionChannel.fetchMessage(e.d.message_id)
+//         .then(msg =>{
+//           console.log(msg.reactions);
+//           var msgReaction = msg.reactions.get(e.d.emoji.name);
+//           console.log(msgReaction);
+//           // var user = client.users.get(e.d.user_id);
+//           // client.emit("messageReactionAdd", msgReaction, user);
+//         })
+//         .catch(err=> console.log(err))
+//        }
+//      }
+//    }
+   
+//   else if(eventName === 'MESSAGE_REACTION_REMOVE')
+//   {
+//     if(e.d.message_id === "639587109098749965")
+//     {
+//       var reactionChannel = client.channels.get(e.d.channel_id);
+//       if(reactionChannel.messages.has(e.d.message_id)) // If message is cached
+//        {
+//          return;
+//        }
+//        else // Cache message
+//        {
+//         reactionChannel.fetchMessage(e.d.message_id)
+//         .then(msg =>{
+          
+//           var msgReaction = msg.reactions.get(e.d.emoji.name + ":" + e.d.emoji.id);
+//           var user = client.users.get(e.d.user_id);
+//           client.emit("messageReactionRemove", msgReaction, user);
+//         })
+//         .catch(err=> console.log(err))
+//        }
+//     }
+//   }
+//  });
+
+// client.on('messageReactionAdd', (messageReaction, user) => {
+//   var roleName = messageReaction.emoji.name;
+//   var role = messageReaction.message.guild.roles.find(role => role.name.toLowerCase() === 
+//   roleName.toLowerCase());
+//   if(role)
+//   {
+//     var member = messageReaction.message.guild.members.find(member => member.id === user.id);
+//     if(member)
+//     {
+//       member.addRole(role.id);
+//       console.log("success added")
+//     }
+//   }
+// })
+
+// client.on('messageReactionRemove', (messageReaction, user) => {
+//   var roleName = messageReaction.emoji.name;
+//   var role = messageReaction.message.guild.roles.find( role => role.name.toLowerCase() === 
+//   roleName.toLowerCase());
+//   if(role)
+//   {
+//     var member = messageReaction/message.guild.members.find(member => member.id === user.id);
+//     if(member)
+//     {
+//       member.removeRole(role.id);
+//       console.log("success removed")
+//     }
+//   }
+// })
 
 client.login(global.token);
-users = global.database.getUsers();
-// users.then(function(result)
-// {
-//   console.log(result);
-// })
