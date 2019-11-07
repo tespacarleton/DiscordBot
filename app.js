@@ -230,5 +230,4 @@ client.on(`error`, e => {
   logger.error(e);
  });
 
-
 client.login(global.token);
