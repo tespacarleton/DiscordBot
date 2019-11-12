@@ -25,6 +25,7 @@ exports.invite = function(message, args){
  * @param {string[]} args - args from command (pre split)
  */
 exports.role = function(message, args){
+    global.database.updateRoles();
     if (args.length < 1 || args[0] == `--help`) {
         message.channel.send(`**These are game roles you're allowed to join:** \n${global.util.listToString(global.GAME_ROLES)} \nUse \`!role <role_name>\` to join a role \nUse \`!rmrole <role_name>\` to leave a role`)
         return;

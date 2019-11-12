@@ -74,6 +74,14 @@ exports.getRoles = function() {
 	});
 };
 
+//Does not finish in time usually before it is used :(
+exports.updateRoles = function()
+{
+	roleList = global.database.getRoles();
+	roleList.then(function(result){
+		global.GAME_ROLES = result;
+	})
+};
 /*
  * Entry Condition: Promote user command has been issued
  * Action: Increase user's permission level
