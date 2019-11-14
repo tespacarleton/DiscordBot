@@ -186,10 +186,4 @@ exports.removeRole = function (RoleID, RoleName) {
     });
 }
 
-exports.temp = function () {
-    connection.query(`SELECT RoleID, RoleName FROM RoleList`, function (error, results, fields) {
-        if (error) return reject(error);
-        console.log(results);
-    });
-}
 exports.addLog = function(){};

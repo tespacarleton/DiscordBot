@@ -231,4 +231,3 @@ client.on(`error`, e => {
  });
 
 client.login(global.token);
-database.temp();
