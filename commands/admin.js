@@ -253,3 +253,39 @@ exports.demote = function(message, args) {
     );
     return;
 }
+
+/*
+ * Invocation Syntax: !updateRoleList
+ * Action: Requeries database for list of roles.  
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
+exports.updaterolelist = function (message, args) {
+    global.database.updateRoles();
+    message.channel.send(`Role list updated.`);
+    return;
+}
+
+/*
+ * Invocation Syntax: !extendRoleList
+ * Action: Adds role to RoleList table in database.
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
+exports.extendrolelist = function (message, args) {
+    if (!args[0]) {
+        message.channel.send(`You need arguments to add a role!`);
+        return;
+    }
+    var newargs = [];
+    for (let item of args) {
+        if (item != args[0]) {
+            newargs.push(item);
+        }
+    }
+    var newargs = newargs.join(" ");
+    logger.info(`Inserting role ID ${args[0]} role name ${newargs} to database.`);
+    global.database.addRole(args[0], newargs);
+    message.channel.send(`Added ${newargs} to role list.`);
+    return;
+}

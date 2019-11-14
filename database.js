@@ -74,6 +74,7 @@ exports.getRoles = function() {
 	});
 };
 
+<<<<<<< HEAD
 //Does not finish in time usually before it is used :(
 exports.updateRoles = function()
 {
@@ -82,6 +83,16 @@ exports.updateRoles = function()
 		global.GAME_ROLES = result;
 	})
 };
+=======
+exports.updateRoles = function()
+{
+    roleList = global.database.getRoles();
+    roleList.then(function (result) {
+        global.GAME_ROLES = result;
+    })
+}
+
+>>>>>>> origin
 /*
  * Entry Condition: Promote user command has been issued
  * Action: Increase user's permission level
@@ -161,5 +172,35 @@ exports.getSpecialChannels = function(){
 			return resolve(roles);
 		});
 	});
+}
+
+exports.addRole = function (RoleID, RoleName) {
+    return new Promise(function (resolve, reject) {
+        console.log(RoleID, RoleName);
+        //connection.query(`INSERT into RoleList (RoleID, RoleName) VALUES ("${RoleID}", "${RoleName}")"`,
+        connection.query(`INSERT into RoleList (RoleID, RoleName) VALUES ("${RoleID}", "${RoleName}")`,
+        function (error, results, fields) {
+            if (error) return reject(error);
+            return resolve(results);
+        });
+    });
+}
+exports.removeRole = function (RoleID, RoleName) {
+    return new Promise(function (resolve, reject) {
+        console.log(RoleID, RoleName);
+        //connection.query(`INSERT into RoleList (RoleID, RoleName) VALUES ("${RoleID}", "${RoleName}")"`,
+        connection.query(`INSERT into RoleList (RoleID, RoleName) VALUES ("${RoleID}", "${RoleName}")`,
+            function (error, results, fields) {
+                if (error) return reject(error);
+                return resolve(results);
+            });
+    });
+}
+
+exports.temp = function () {
+    connection.query(`SELECT RoleID, RoleName FROM RoleList`, function (error, results, fields) {
+        if (error) return reject(error);
+        console.log(results);
+    });
 }
 exports.addLog = function(){};
