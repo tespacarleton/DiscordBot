@@ -267,7 +267,7 @@ exports.updaterolelist = function (message) {
 
 /*
  * Invocation Syntax: !addrolelist
- * Action: Adds role to RoleList table in database.
+ * Action: Adds a role to the RoleList table in the database.
  * @param {DiscordJS Message} message - discord js message
  * @param {string[]} args - args from command (pre split)
  */
@@ -291,7 +291,7 @@ exports.addrolelist = function (message, args) {
 
 /*
  * Invocation Syntax: !rmrolelist
- * Action: Adds role to RoleList table in database.
+ * Action: Removes a role to the RoleList table in the database.
  * @param {DiscordJS Message} message - discord js message
  * @param {string[]} args - args from command (pre split)
  */

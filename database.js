@@ -164,7 +164,7 @@ exports.getSpecialChannels = function(){
 }
 
 /*
- * Entry Condition: Add role command has been issued
+ * Entry Condition: Add rolelist command has been issued
  * Action: Add a role to the database
  * @param {string} roleID - role ID to add
  * @param {string} roleName - role name to add
@@ -180,11 +180,10 @@ exports.addRole = function (roleID, roleName) {
 }
 
 /*
- * Entry Condition: Remove role command has been issued
+ * Entry Condition: Remove rolelist command has been issued
  * Action: Remove a role from the database
  * @param {string} roleName - role name to remove
  */
-
 exports.removeRole = function (roleName) {
     return new Promise(function (resolve, reject) {
         connection.query(`DELETE from RoleList WHERE RoleName = "${roleName}"`,
