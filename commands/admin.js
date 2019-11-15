@@ -178,7 +178,7 @@ exports.welcome_image = function(message, args) {
 
 /*
  * Invocation Syntax: !promote <user>
- * Action: Promotes the user id specified
+ * Action: Promotes the user id specified and updates DiscordUser.Permissions in the db
  * @param {DiscordJS Message} message - discord js message
  * @param {string[]} args - args from command (pre split)
  */
@@ -204,7 +204,7 @@ exports.promote = function(message, args) {
     logger.info(`Promoting ${user.username}`);
     global.database.promoteUser(user).then(
         function(results){
-            global.util.updateUserPermissions(message.channel, `Successfully promoted ${user} to permission level ${global.userList[user.id]}`);
+            global.util.updateUserPermissions(message.channel, `Successfully promoted ${user}`);
         }).catch(
         function(reason){
             logger.error(reason);
@@ -214,7 +214,7 @@ exports.promote = function(message, args) {
 }
 /*
  * Invocation Syntax: !demote <user>
- * Action: Demotes the user id specified
+ * Action: Demotes the user id specified updates DiscordUser.Permissions in the db
  * @param {DiscordJS Message} message - discord js message
  * @param {string[]} args - args from command (pre split)
  */
@@ -251,5 +251,61 @@ exports.demote = function(message, args) {
             message.channel.send(`Demotion Failed, see system logs`);
         }
     );
+    return;
+}
+
+/*
+ * Invocation Syntax: !updateRoleList
+ * Action: Requeries database for list of roles.  
+ * @param {DiscordJS Message} message - discord js message
+ */
+exports.updaterolelist = function (message) {
+    global.database.updateRoles();
+    message.channel.send(`Role list updated.`);
+    return;
+}
+
+/*
+ * Invocation Syntax: !addrolelist
+ * Action: Adds a role to the RoleList table in the database.
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
+exports.addrolelist = function (message, args) {
+    if (!args[0]) {
+        message.channel.send(`You need arguments to add a role!`);
+        return;
+    }
+    var newargs = [];
+    for (let item of args) {
+        newargs.push(item);
+    }
+    var newargs = newargs.join(" ");
+    logger.info(`Inserting role ${newargs} to database.`);
+    global.database.addRole(newargs);
+    message.channel.send(`Added ${newargs} to role list.`);
+    return;
+}
+
+/*
+ * Invocation Syntax: !rmrolelist
+ * Action: Removes a role to the RoleList table in the database.
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
+exports.rmrolelist = function (message, args) {
+    if (!args[0]) {
+        message.channel.send(`You to specify the role name to remove a role!`);
+        return;
+    }
+    var newargs = [];
+    for (let item of args) {
+        newargs.push(item);
+    }
+    var newargs = newargs.join(" ");
+
+    logger.info(`Removing ${newargs} from database.`);
+    global.database.removeRole(newargs);
+    message.channel.send(`Removed ${newargs} from role list.`);
     return;
 }

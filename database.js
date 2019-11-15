@@ -46,17 +46,42 @@ handleDisconnect();
  */
 exports.getUsers = function() {
 	return new Promise(function(resolve, reject) {
-		connection.query(`SELECT id, permissions FROM bot_permissions`, function (error, results, fields) {
+		connection.query(`SELECT DiscordID, Permissions FROM DiscordUser`, function (error, results, fields) {
+			
 			if (error) return reject(error);
 			var ids = new Map();
 			for(var i=0; i < results.length; i++){
-				ids[results[i].id] =  results[i].permissions;
+				ids[results[i].DiscordID] =  results[i].Permissions;
+			}
+			return resolve(ids);
+		});
+	});
+};
+/*
+ * Entry Condition: Bot has just started, or has updated user info
+ * Action: Retrieve current Role data from the database
+ */
+exports.getRoles = function() {
+	return new Promise(function(resolve, reject) {
+		connection.query(`SELECT RoleName FROM RoleList`, function (error, results, fields) {
+			if (error) return reject(error);
+			var ids = [];
+			for(var i=0; i < results.length; i++){
+				ids[i] =  results[i].RoleName;
 			}
 			return resolve(ids);
 		});
 	});
 };
 
+
+exports.updateRoles = function()
+{
+    roleList = global.database.getRoles();
+    roleList.then(function (result) {
+        global.GAME_ROLES = result;
+    })
+}
 /*
  * Entry Condition: Promote user command has been issued
  * Action: Increase user's permission level
@@ -65,9 +90,9 @@ exports.getUsers = function() {
 exports.promoteUser = function(user) {
 	return new Promise(function(resolve, reject) {
 		connection.query(
-			`INSERT INTO bot_permissions VALUES (
-				${user.id}, "${user.username}", "${user.discriminator}", 1, NULL
-			)	ON DUPLICATE KEY UPDATE permissions=permissions+1`,
+			`INSERT INTO DiscordUser VALUES (
+				${user.id}, "${user.username}", "${user.discriminator}", 1
+			)	ON DUPLICATE KEY UPDATE Permissions=Permissions+1`,
 		function (error, results, fields) {
 			if (error) return reject(error);
 			return resolve(results);
@@ -82,8 +107,8 @@ exports.promoteUser = function(user) {
  */
 exports.demoteUser = function(user) {
 	return new Promise(function(resolve, reject) {
-		connection.query(`UPDATE bot_permissions SET permissions=permissions-1 WHERE 
-		id=${parseInt(user.id)};`,
+		connection.query(`UPDATE DiscordUser SET Permissions=Permissions-1 WHERE 
+		DiscordID=${parseInt(user.id)};`,
 		function (error, results, fields) {
 			if (error) return reject(error);
 			return resolve(results);
@@ -137,4 +162,36 @@ exports.getSpecialChannels = function(){
 		});
 	});
 }
+
+/*
+ * Entry Condition: Add rolelist command has been issued
+ * Action: Add a role to the database
+ * @param {string} roleID - role ID to add
+ * @param {string} roleName - role name to add
+ */
+exports.addRole = function (roleName) {
+    return new Promise(function (resolve, reject) {
+        connection.query(`INSERT into RoleList (RoleName) VALUES ("${roleName}")`,
+        function (error, results, fields) {
+            if (error) return reject(error);
+            return resolve(results);
+        });
+    });
+}
+
+/*
+ * Entry Condition: Remove rolelist command has been issued
+ * Action: Remove a role from the database
+ * @param {string} roleName - role name to remove
+ */
+exports.removeRole = function (roleName) {
+    return new Promise(function (resolve, reject) {
+        connection.query(`DELETE from RoleList WHERE RoleName = "${roleName}"`,
+            function (error, results, fields) {
+                if (error) return reject(error);
+                return resolve(results);
+            });
+    });
+}
+
 exports.addLog = function(){};

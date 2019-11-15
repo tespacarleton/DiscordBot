@@ -45,7 +45,11 @@ global.MOD_LEVEL = 1;
 //Admin IDs
 global.userList = {};
 global.specialChannels = {};
-global.GAME_ROLES = [`Smash Ultimate`,`Rhythm`, `Speedrunning`,`Starcraft`, `Destiny`, `WoW`, `Rocket League`, `Hearthstone`, `Smash Ultimate`, `Smash4`, `Melee`, `Smash`,`Overwatch`, `CS:GO`, `Smite`, `Fire Emblem`, `Paladins`, `Pokemon`, `Runescape`, `Tabletop`, `PUBG`, `Rainbow Six Siege`, `DotA`, `HOTS`, `League of Legends`, `Fortnite`, `PS4`, `XBOX`, `Switch`, `Yu-Gi-Oh`, `Magic the Gathering`];
+roleList = global.database.getRoles();
+roleList.then(function(result){
+  global.GAME_ROLES = result;
+})
+
 global.MEMBER_COMMANDS = require('./commands/member.js')
 global.ADMIN_COMMANDS = require('./commands/admin.js');
 global.MOD_COMMANDS = require('./commands/mod.js');
@@ -225,4 +229,5 @@ client.on(`error`, e => {
   logger.error(e.stack);
   logger.error(e);
  });
+
 client.login(global.token);
