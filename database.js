@@ -169,9 +169,9 @@ exports.getSpecialChannels = function(){
  * @param {string} roleID - role ID to add
  * @param {string} roleName - role name to add
  */
-exports.addRole = function (roleID, roleName) {
+exports.addRole = function (roleName) {
     return new Promise(function (resolve, reject) {
-        connection.query(`INSERT into RoleList (RoleID, RoleName) VALUES ("${roleID}", "${roleName}")`,
+        connection.query(`INSERT into RoleList (RoleName) VALUES ("${roleName}")`,
         function (error, results, fields) {
             if (error) return reject(error);
             return resolve(results);

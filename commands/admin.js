@@ -278,13 +278,11 @@ exports.addrolelist = function (message, args) {
     }
     var newargs = [];
     for (let item of args) {
-        if (item != args[0]) {
-            newargs.push(item);
-        }
+        newargs.push(item);
     }
     var newargs = newargs.join(" ");
-    logger.info(`Inserting role ID ${args[0]} role name ${newargs} to database.`);
-    global.database.addRole(args[0], newargs);
+    logger.info(`Inserting role ${newargs} to database.`);
+    global.database.addRole(newargs);
     message.channel.send(`Added ${newargs} to role list.`);
     return;
 }
