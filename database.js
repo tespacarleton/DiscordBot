@@ -182,11 +182,12 @@ exports.addRole = function (roleID, roleName) {
 /*
  * Entry Condition: Remove role command has been issued
  * Action: Remove a role from the database
- * @param {string} roleID - role ID to remove
+ * @param {string} roleName - role name to remove
  */
-exports.removeRole = function (RoleID) {
+
+exports.removeRole = function (roleName) {
     return new Promise(function (resolve, reject) {
-        connection.query(`DELETE from RoleList WHERE RoleID = "${RoleID}"`,
+        connection.query(`DELETE from RoleList WHERE RoleName = "${roleName}"`,
             function (error, results, fields) {
                 if (error) return reject(error);
                 return resolve(results);

@@ -266,12 +266,12 @@ exports.updaterolelist = function (message) {
 }
 
 /*
- * Invocation Syntax: !extendrolelist
+ * Invocation Syntax: !addrolelist
  * Action: Adds role to RoleList table in database.
  * @param {DiscordJS Message} message - discord js message
  * @param {string[]} args - args from command (pre split)
  */
-exports.extendrolelist = function (message, args) {
+exports.addrolelist = function (message, args) {
     if (!args[0]) {
         message.channel.send(`You need arguments to add a role!`);
         return;
@@ -297,11 +297,17 @@ exports.extendrolelist = function (message, args) {
  */
 exports.rmrolelist = function (message, args) {
     if (!args[0]) {
-        message.channel.send(`You need the role ID to remove a role!`);
+        message.channel.send(`You to specify the role name to remove a role!`);
         return;
     }
-    logger.info(`Removing role ID ${args[0]} from database.`);
-    global.database.removeRole(args[0]);
-    message.channel.send(`Removed ${args[0]}} from role list.`);
+    var newargs = [];
+    for (let item of args) {
+        newargs.push(item);
+    }
+    var newargs = newargs.join(" ");
+
+    logger.info(`Removing ${newargs} from database.`);
+    global.database.removeRole(newargs);
+    message.channel.send(`Removed ${newargs} from role list.`);
     return;
 }
