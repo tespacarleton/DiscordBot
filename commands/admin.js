@@ -178,7 +178,7 @@ exports.welcome_image = function(message, args) {
 
 /*
  * Invocation Syntax: !promote <user>
- * Action: Promotes the user id specified and updates DiscordUser.Permissions in the db.  
+ * Action: Promotes the user id specified and updates DiscordUser.Permissions in the db
  * @param {DiscordJS Message} message - discord js message
  * @param {string[]} args - args from command (pre split)
  */
@@ -214,7 +214,7 @@ exports.promote = function(message, args) {
 }
 /*
  * Invocation Syntax: !demote <user>
- * Action: Demotes the user id specified
+ * Action: Demotes the user id specified updates DiscordUser.Permissions in the db
  * @param {DiscordJS Message} message - discord js message
  * @param {string[]} args - args from command (pre split)
  */
