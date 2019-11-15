@@ -74,16 +74,7 @@ exports.getRoles = function() {
 	});
 };
 
-<<<<<<< HEAD
-//Does not finish in time usually before it is used :(
-exports.updateRoles = function()
-{
-	roleList = global.database.getRoles();
-	roleList.then(function(result){
-		global.GAME_ROLES = result;
-	})
-};
-=======
+
 exports.updateRoles = function()
 {
     roleList = global.database.getRoles();
@@ -91,8 +82,6 @@ exports.updateRoles = function()
         global.GAME_ROLES = result;
     })
 }
-
->>>>>>> origin
 /*
  * Entry Condition: Promote user command has been issued
  * Action: Increase user's permission level
@@ -174,22 +163,30 @@ exports.getSpecialChannels = function(){
 	});
 }
 
-exports.addRole = function (RoleID, RoleName) {
+/*
+ * Entry Condition: Add role command has been issued
+ * Action: Add a role to the database
+ * @param {string} roleID - role ID to add
+ * @param {string} roleName - role name to add
+ */
+exports.addRole = function (roleID, roleName) {
     return new Promise(function (resolve, reject) {
-        console.log(RoleID, RoleName);
-        //connection.query(`INSERT into RoleList (RoleID, RoleName) VALUES ("${RoleID}", "${RoleName}")"`,
-        connection.query(`INSERT into RoleList (RoleID, RoleName) VALUES ("${RoleID}", "${RoleName}")`,
+        connection.query(`INSERT into RoleList (RoleID, RoleName) VALUES ("${roleID}", "${roleName}")`,
         function (error, results, fields) {
             if (error) return reject(error);
             return resolve(results);
         });
     });
 }
-exports.removeRole = function (RoleID, RoleName) {
+
+/*
+ * Entry Condition: Remove role command has been issued
+ * Action: Remove a role from the database
+ * @param {string} roleID - role ID to remove
+ */
+exports.removeRole = function (RoleID) {
     return new Promise(function (resolve, reject) {
-        console.log(RoleID, RoleName);
-        //connection.query(`INSERT into RoleList (RoleID, RoleName) VALUES ("${RoleID}", "${RoleName}")"`,
-        connection.query(`INSERT into RoleList (RoleID, RoleName) VALUES ("${RoleID}", "${RoleName}")`,
+        connection.query(`DELETE from RoleList WHERE RoleID = "${RoleID}"`,
             function (error, results, fields) {
                 if (error) return reject(error);
                 return resolve(results);

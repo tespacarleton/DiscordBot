@@ -258,16 +258,15 @@ exports.demote = function(message, args) {
  * Invocation Syntax: !updateRoleList
  * Action: Requeries database for list of roles.  
  * @param {DiscordJS Message} message - discord js message
- * @param {string[]} args - args from command (pre split)
  */
-exports.updaterolelist = function (message, args) {
+exports.updaterolelist = function (message) {
     global.database.updateRoles();
     message.channel.send(`Role list updated.`);
     return;
 }
 
 /*
- * Invocation Syntax: !extendRoleList
+ * Invocation Syntax: !extendrolelist
  * Action: Adds role to RoleList table in database.
  * @param {DiscordJS Message} message - discord js message
  * @param {string[]} args - args from command (pre split)
@@ -287,5 +286,22 @@ exports.extendrolelist = function (message, args) {
     logger.info(`Inserting role ID ${args[0]} role name ${newargs} to database.`);
     global.database.addRole(args[0], newargs);
     message.channel.send(`Added ${newargs} to role list.`);
+    return;
+}
+
+/*
+ * Invocation Syntax: !rmrolelist
+ * Action: Adds role to RoleList table in database.
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
+exports.rmrolelist = function (message, args) {
+    if (!args[0]) {
+        message.channel.send(`You need the role ID to remove a role!`);
+        return;
+    }
+    logger.info(`Removing role ID ${args[0]} from database.`);
+    global.database.removeRole(args[0]);
+    message.channel.send(`Removed ${args[0]}} from role list.`);
     return;
 }
