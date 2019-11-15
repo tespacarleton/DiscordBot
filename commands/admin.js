@@ -178,7 +178,7 @@ exports.welcome_image = function(message, args) {
 
 /*
  * Invocation Syntax: !promote <user>
- * Action: Promotes the user id specified
+ * Action: Promotes the user id specified and updates DiscordUser.Permissions in the db.  
  * @param {DiscordJS Message} message - discord js message
  * @param {string[]} args - args from command (pre split)
  */
@@ -204,7 +204,7 @@ exports.promote = function(message, args) {
     logger.info(`Promoting ${user.username}`);
     global.database.promoteUser(user).then(
         function(results){
-            global.util.updateUserPermissions(message.channel, `Successfully promoted ${user} to permission level ${global.userList[user.id]}`);
+            global.util.updateUserPermissions(message.channel, `Successfully promoted ${user}`);
         }).catch(
         function(reason){
             logger.error(reason);

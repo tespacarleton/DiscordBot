@@ -90,9 +90,9 @@ exports.updateRoles = function()
 exports.promoteUser = function(user) {
 	return new Promise(function(resolve, reject) {
 		connection.query(
-			`INSERT INTO bot_permissions VALUES (
-				${user.id}, "${user.username}", "${user.discriminator}", 1, NULL
-			)	ON DUPLICATE KEY UPDATE permissions=permissions+1`,
+			`INSERT INTO DiscordUser VALUES (
+				${user.id}, "${user.username}", "${user.discriminator}", 1
+			)	ON DUPLICATE KEY UPDATE Permissions=Permissions+1`,
 		function (error, results, fields) {
 			if (error) return reject(error);
 			return resolve(results);
@@ -107,8 +107,8 @@ exports.promoteUser = function(user) {
  */
 exports.demoteUser = function(user) {
 	return new Promise(function(resolve, reject) {
-		connection.query(`UPDATE bot_permissions SET permissions=permissions-1 WHERE 
-		id=${parseInt(user.id)};`,
+		connection.query(`UPDATE DiscordUser SET Permissions=Permissions-1 WHERE 
+		DiscordID=${parseInt(user.id)};`,
 		function (error, results, fields) {
 			if (error) return reject(error);
 			return resolve(results);
