@@ -17,7 +17,7 @@ exports.message = function(context, value=undefined){
 		var x = Math.floor(Math.random() * variations);
 		switch(x){
 			case 0:
-				response = global.specialChannels['log']/*`English Please! I have no idea what the command \`${value}\` is for. Do you want a list of things I'm good at? Just ask for \`!help\``*/
+				response = `English Please! I have no idea what the command \`${value}\` is for. Do you want a list of things I'm good at? Just ask for \`!help\``
 				break;
 			case 1:
 				response = `What do you mean by \`${value}\`?`
