@@ -176,7 +176,9 @@ client.on(`message`, (message) => {
     Id: ${message.id}
     Author: ${message.author}
     Content: "${message}"
-    Attachments: ${attachments}`);
+    Attachments: ${attachments}
+    Channel: ${message.channel}`
+    );
  });
 
 /*
@@ -184,14 +186,17 @@ client.on(`message`, (message) => {
  * Action: log the metadata and content of the old and new message
  */
 client.on(`messageUpdate`, (oldMessage, newMessage) => {
-  attachments = oldMessage.attachments.array().length!=0 ? "Yes" : "No";
-  util.logToServer(`The following message was updated:
-    Id: ${newMessage.id}
-    Author: ${oldMessage.author}
-    Attachments: ${attachments}
-    Old Content: "${oldMessage}"
-    New Content: "${newMessage}"`
-   );
+  if(oldMessage.content!=newMessage.content){
+    attachments = oldMessage.attachments.array().length!=0 ? "Yes" : "No";
+    util.logToServer(`The following message was updated:
+      Id: ${newMessage.id}
+      Author: ${oldMessage.author}
+      Attachments: ${attachments}
+      Old Content: "${oldMessage.content}"
+      New Content: "${newMessage.content}"
+      Channel: ${newMessage.channel}`
+      );
+  }
 });
 /*
  * Entry Condition: A user connects to a server
