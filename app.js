@@ -97,7 +97,7 @@ client.on(`message`, (message) => {
 	}
 	// Set prefix
   let prefix = `!`
-  // Exit if bot or prefix not found: Do all non-commands above this line
+  // Exit if bot or prefix not found or if message has multiple !: Do all non-commands above this line
   if(!message.content.startsWith(prefix) || message.author.bot || message.content[1] == "!"){
     return
   }
