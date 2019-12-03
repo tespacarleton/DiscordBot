@@ -176,10 +176,16 @@ client.on(`message`, (message) => {
  * Action: Log the metadata about the message, and the message itself
  */
  client.on(`messageDelete`, message => {
+  for(var i = 0; i < logBlackList.length; i++){
+    if(logBlackList[i]===message.channel.name){
+        return;
+    }
+}
   attachments = message.attachments.array().length!=0 ? "Yes" : "No";
+  
   util.logToServer(`The following message was deleted:
     Id: ${message.id}
-    Author: ${message.author}
+    Author: ${message.author.username}
     Content: "${message}"
     Attachments: ${attachments}
     Channel: ${message.channel}`
@@ -194,14 +200,13 @@ client.on(`messageUpdate`, (oldMessage, newMessage) => {
   if(oldMessage.content!=newMessage.content){
     for(var i = 0; i < logBlackList.length; i++){
       if(logBlackList[i]===oldMessage.channel.name){
-          console.log(oldMessage.channel.name);
           return;
       }
   }
     attachments = oldMessage.attachments.array().length!=0 ? "Yes" : "No";
     util.logToServer(`The following message was updated:
       Id: ${newMessage.id}
-      Author: ${oldMessage.author}
+      Author: ${oldMessage.author.username}
       Attachments: ${attachments}
       Old Content: "${oldMessage.content}"
       New Content: "${newMessage.content}"

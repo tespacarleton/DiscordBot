@@ -169,7 +169,7 @@ exports.getLogBlacklist = function(){
 			if (error) return reject(error);
 			var channels = [];
 			for(var i=0; i < results.length; i++){
-				channels[i] =  channels[i].channel_name;
+				channels[i] =  results[i].channel_name;
 			}
 			return resolve(channels);
 		});
