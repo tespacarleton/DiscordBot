@@ -49,6 +49,10 @@ roleList = global.database.getRoles();
 roleList.then(function(result){
   global.GAME_ROLES = result;
 })
+logBlackList = global.database.getLogBlacklist();
+logBlackList.then(function(result){
+  logBlackList = result;
+})
 
 global.MEMBER_COMMANDS = require('./commands/member.js')
 global.ADMIN_COMMANDS = require('./commands/admin.js');
@@ -188,6 +192,12 @@ client.on(`message`, (message) => {
  */
 client.on(`messageUpdate`, (oldMessage, newMessage) => {
   if(oldMessage.content!=newMessage.content){
+    for(var i = 0; i < logBlackList.length; i++){
+      if(logBlackList[i]===oldMessage.channel.name){
+          console.log(oldMessage.channel.name);
+          return;
+      }
+  }
     attachments = oldMessage.attachments.array().length!=0 ? "Yes" : "No";
     util.logToServer(`The following message was updated:
       Id: ${newMessage.id}
