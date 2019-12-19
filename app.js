@@ -207,10 +207,11 @@ client.on(`messageUpdate`, (oldMessage, newMessage) => {
     util.logToServer(`The following message was updated:
       Id: ${newMessage.id}
       Author: ${oldMessage.author}
+      Channel: ${newMessage.channel}
       Attachments: ${attachments}
       Old Content: "${oldMessage.content}"
       New Content: "${newMessage.content}"
-      Channel: ${newMessage.channel}`
+      `
       );
   }
 });
