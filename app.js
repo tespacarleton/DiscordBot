@@ -206,7 +206,7 @@ client.on(`messageUpdate`, (oldMessage, newMessage) => {
     attachments = oldMessage.attachments.array().length!=0 ? "Yes" : "No";
     util.logToServer(`The following message was updated:
       Id: ${newMessage.id}
-      Author: ${oldMessage.author.username}
+      Author: ${oldMessage.author}
       Attachments: ${attachments}
       Old Content: "${oldMessage.content}"
       New Content: "${newMessage.content}"
