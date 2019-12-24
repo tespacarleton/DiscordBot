@@ -163,6 +163,19 @@ exports.getSpecialChannels = function(){
 	});
 }
 
+exports.getLogBlacklist = function(){
+	return new Promise(function(resolve, reject) {
+		connection.query(`SELECT channel_name FROM LogBlacklist`, function (error, results, fields) {
+			if (error) return reject(error);
+			var channels = [];
+			for(var i=0; i < results.length; i++){
+				channels[i] =  results[i].channel_name;
+			}
+			return resolve(channels);
+		});
+	});
+}
+
 /*
  * Entry Condition: Add rolelist command has been issued
  * Action: Add a role to the database

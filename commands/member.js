@@ -77,7 +77,7 @@ exports.rmrole = function(message, args){
     logger.info(`User ${message.author.username} leaving role ${role.name}`);
     if (role){
         message.member.removeRole(role).catch(logger.error);
-        message.channel.send(`Your are no longer a member of: ${role.name}... \nSorry to see you go` );
+        message.channel.send(`You are no longer a member of: ${role.name}... \nSorry to see you go` );
         return
     }
 }

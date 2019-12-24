@@ -49,6 +49,10 @@ roleList = global.database.getRoles();
 roleList.then(function(result){
   global.GAME_ROLES = result;
 })
+logBlackList = global.database.getLogBlacklist();
+logBlackList.then(function(result){
+  logBlackList = result;
+})
 
 global.MEMBER_COMMANDS = require('./commands/member.js')
 global.ADMIN_COMMANDS = require('./commands/admin.js');
@@ -97,10 +101,11 @@ client.on(`message`, (message) => {
 	}
 	// Set prefix
   let prefix = `!`
-  // Exit if bot or prefix not found: Do all non-commands above this line
-  if(!message.content.startsWith(prefix) || message.author.bot){
+  // Exit if bot or prefix not found or if message has multiple !: Do all non-commands above this line
+  if(!message.content.startsWith(prefix) || message.author.bot || message.content[1] == "!"){
     return
   }
+  console.log(message.content[1]);
   const args = message.content.slice(prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
   try{
@@ -171,12 +176,20 @@ client.on(`message`, (message) => {
  * Action: Log the metadata about the message, and the message itself
  */
  client.on(`messageDelete`, message => {
+  for(var i = 0; i < logBlackList.length; i++){
+    if(logBlackList[i]===message.channel.name){
+        return;
+    }
+}
   attachments = message.attachments.array().length!=0 ? "Yes" : "No";
+  
   util.logToServer(`The following message was deleted:
     Id: ${message.id}
-    Author: ${message.author}
+    Author: ${message.author.username}
     Content: "${message}"
-    Attachments: ${attachments}`);
+    Attachments: ${attachments}
+    Channel: ${message.channel}`
+    );
  });
 
 /*
@@ -184,14 +197,23 @@ client.on(`message`, (message) => {
  * Action: log the metadata and content of the old and new message
  */
 client.on(`messageUpdate`, (oldMessage, newMessage) => {
-  attachments = oldMessage.attachments.array().length!=0 ? "Yes" : "No";
-  util.logToServer(`The following message was updated:
-    Id: ${newMessage.id}
-    Author: ${oldMessage.author}
-    Attachments: ${attachments}
-    Old Content: "${oldMessage}"
-    New Content: "${newMessage}"`
-   );
+  if(oldMessage.content!=newMessage.content){
+    for(var i = 0; i < logBlackList.length; i++){
+      if(logBlackList[i]===oldMessage.channel.name){
+          return;
+      }
+  }
+    attachments = oldMessage.attachments.array().length!=0 ? "Yes" : "No";
+    util.logToServer(`The following message was updated:
+      Id: ${newMessage.id}
+      Author: ${oldMessage.author}
+      Channel: ${newMessage.channel}
+      Attachments: ${attachments}
+      Old Content: "${oldMessage.content}"
+      New Content: "${newMessage.content}"
+      `
+      );
+  }
 });
 /*
  * Entry Condition: A user connects to a server
