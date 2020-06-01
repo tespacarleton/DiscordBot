@@ -102,10 +102,9 @@ client.on(`message`, (message) => {
 	// Set prefix
   let prefix = `!`
   // Exit if bot or prefix not found or if message has multiple !: Do all non-commands above this line
-  if(!message.content.startsWith(prefix) || message.author.bot || message.content[1] == "!"){
+  if(!message.content.startsWith(prefix) || message.author.bot || message.content[1] == "!" || message.content.length == 1){
     return
   }
-  console.log(message.content[1]);
   const args = message.content.slice(prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
   try{
