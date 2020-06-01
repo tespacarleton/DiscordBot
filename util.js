@@ -162,11 +162,17 @@ exports.updateSpecialChannels = function(callbackChannel=undefined, msg=undefine
     });
 }
 
-exports.logToServer = function(msg, level=undefined){
+exports.logToServer = function(msgText, level=undefined){
     if('log' in global.specialChannels){
-        global.server.channels.get(global.specialChannels['log']).send(msg);
+        msgText = msgText.replace('@', 'replace');
+        let loggedmessage = global.server.channels.get(global.specialChannels['log']).send(msgText);
+        msgText = msgText.replace('replace', '@');
+        loggedmessage.then(function(result){
+            result.edit(msgText);
+          })
     }
     else{
         logger.warn("Please set a server 'log' channel in order to maximize usage of bot features");
     }
 }
+
