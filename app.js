@@ -207,7 +207,6 @@ client.on(`messageUpdate`, (oldMessage, newMessage) => {
       Id: ${newMessage.id}
       Author: ${oldMessage.author}
       Channel: ${newMessage.channel}
-      Channel ID: ${newMessage.channel.id}
       Attachments: ${attachments}
       Old Content: "${oldMessage.content}"
       New Content: "${newMessage.content}"
