@@ -164,9 +164,9 @@ exports.updateSpecialChannels = function(callbackChannel=undefined, msg=undefine
 
 exports.logToServer = function(msgText, level=undefined){
     if('log' in global.specialChannels){
-        msgText = msgText.replace('@', 'replace');
+        msgText = msgText.replace(/@/g, 'replace');
         let loggedmessage = global.server.channels.get(global.specialChannels['log']).send(msgText);
-        msgText = msgText.replace('replace', '@');
+        msgText = msgText.replace(/replace/g, '@');
         loggedmessage.then(function(result){
             result.edit(msgText);
           })
