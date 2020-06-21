@@ -65,3 +65,48 @@ exports.mod = function(message, args){
   message.channel.send(`Here are some things I can help you with as an moderator: \n${global.util.listToString(Object.keys(exports))}`);
   return;
 }
+
+
+exports.ban = function(message, args){
+  //message.channel.send('Hello there')
+  
+  //message.channel.send(args)
+  if (!args[0]) {
+    message.channel.send(`You need arguments for promote!`);
+    return;
+  }
+  var id_rx = /^<@[!]([0-9]+)>$/g;
+  var id = id_rx.exec(args[0]);
+  id = id ? id[1] : args[0];
+  var user = global.util.getUser({id: id});
+  logger.info(`Locating user ${id}`);
+  if(user === undefined){
+      message.channel.send(`User not found!`);
+      return;
+  }
+  
+  
+  server.channels.forEach(ch => {
+      if(ch.type === 'text'){
+          if(ch.messages != undefined){
+              ch.fetchMessages({ limit: 100 }).then(messages => {
+                  var msgs = messages.filter(m => m.author.id === user.id);
+                  console.log(`Received ${msgs.size} messages in ${ch.name} from ${user.username} in the last 100 messages`)
+                  msgs.forEach(msg =>{
+                    msg.delete();
+                  })
+              })
+              console.log(ch.name)
+          }
+      }
+  })
+  console.log("Messages have been removed")
+
+  console.log()
+  message.guild.member(user).ban({ days: 0, reason: 'They deserved it' }).then((member) =>{
+    message.channel.send(member.displayName + " has been banned");
+  }).catch(() => {
+    message.channel.send("Banning failed");
+  })
+  return;
+}
