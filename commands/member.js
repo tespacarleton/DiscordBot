@@ -113,3 +113,7 @@ exports.hello = function(message, args){
     message.reply(`${global.generator.message(`Greeting`)}`)
     return;
 }   
+
+exports.steelseries = function(message, args){
+    message.reply("Tespa is partnered with SteelSeries! Buy from https://steelseries.pbj2.net/cu and use code ``CU10`` to get a discount and support the club!")
+}
