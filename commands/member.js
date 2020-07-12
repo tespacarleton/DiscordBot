@@ -115,6 +115,6 @@ exports.hello = function(message, args){
 }   
 
 exports.steelseries = function(message, args){
-    message.reply("Tespa is partnered with SteelSeries! Buy from https://steelseries.pbj2.net/cu and use code ``CU10`` to get a discount and support the club!")
+    message.channel.send("<:tespa:589160644130111488> Tespa is partnered with <:SteelSeries:731930955320787045> SteelSeries\n\nCheck out https://carleton.gg/SteelSeries and use the code CU10 at checkout to support the club.")
     return;
 }
