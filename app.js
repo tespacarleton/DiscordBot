@@ -4,21 +4,21 @@ const { createLogger, format, transports } = require('winston');
 const { combine, timestamp, label, printf } = format;
 
 const myFormat = printf(info => {
-  return `[${info.timestamp}] ${info.level}: ${info.message}`;
+	return `[${info.timestamp}] ${info.level}: ${info.message}`;
 });
 
 global.logger = createLogger({
-  level: 'debug',
-  format: combine(
-    timestamp(),
-    myFormat
-  ),
-  transports: [
-    new transports.Console({ level: 'info'}),
-    new transports.File({ filename: 'error.log', level: 'error'}),
-    new transports.File({ filename: 'info.log', level: 'info'}),
-    new transports.File({ filename: 'debug.log'})
-  ]
+	level: 'debug',
+	format: combine(
+		timestamp(),
+		myFormat
+	),
+	transports: [
+		new transports.Console({ level: 'info'}),
+		new transports.File({ filename: 'error.log', level: 'error'}),
+		new transports.File({ filename: 'info.log', level: 'info'}),
+		new transports.File({ filename: 'debug.log'})
+	]
 });
 
 global.Discord = require(`discord.js`);
@@ -33,8 +33,8 @@ global.util = require('./util.js');
 global.database = require(`./database.js`);
 global.generator = require(`./generator.js`);
 //Flag
-global.devMode = false;
-global.enableDB = true;
+global.devMode = true;
+global.enableDB = false;
 global.cleanMode = false;
 global.welcomeMessage = false;
 
@@ -47,11 +47,11 @@ global.userList = {};
 global.specialChannels = {};
 roleList = global.database.getRoles();
 roleList.then(function(result){
-  global.GAME_ROLES = result;
+	global.GAME_ROLES = result;
 })
 logBlackList = global.database.getLogBlacklist();
 logBlackList.then(function(result){
-  logBlackList = result;
+	logBlackList = result;
 })
 
 global.MEMBER_COMMANDS = require('./commands/member.js')
@@ -66,19 +66,19 @@ logger = global.logger;
  * Action: Connect to the database, and get static information
  */
 client.on(`ready`, () => {
-  logger.info(`I am ready!`);
-  global.server = global.client.guilds.get(process.env.SERVER_ID);
-  if(enableDB){
-    global.util.updateUserPermissions();
-    global.util.updateSpecialChannels();
-    logger.info("Synced to database successfully");
+	logger.info(`I am ready!`);
+	global.server = global.client.guilds.get(process.env.SERVER_ID);
+	if(enableDB){
+		global.util.updateUserPermissions();
+		global.util.updateSpecialChannels();
+		logger.info("Synced to database successfully");
 	}
-  if(devMode){
-    logger.info('devMode Enabled');
-  }
-  if(cleanMode){
-    logger.info('cleanMode Enabled');
-  }
+	if(devMode){
+		logger.info('devMode Enabled');
+	}
+	if(cleanMode){
+		logger.info('cleanMode Enabled');
+	}
 });
 /*
  * Entry Condition: The bot receives a message
@@ -86,87 +86,87 @@ client.on(`ready`, () => {
  * @param {DiscordJS Message} message - the relevant message object
  */
 client.on(`message`, (message) => {
-  //Full Log
-  if(devMode){
-    	logger.debug(message);
+	//Full Log
+	if(devMode){
+			logger.debug(message);
 	}else{
-    //Shorthand Log
-    if(message.channel != `DMChannel` && message.channel.guild){
-      logger.debug(`Server: ` + message.channel.guild.name);
-      //client.channels.get().send(message);
-    }
-    logger.debug(`Channel: ` + message.channel.name);
-    logger.debug(`Message: ` + message.content);
-    logger.debug(`Author: ` + message.author.username);
+		//Shorthand Log
+		if(message.channel != `DMChannel` && message.channel.guild){
+			logger.debug(`Server: ` + message.channel.guild.name);
+			//client.channels.get().send(message);
+		}
+		logger.debug(`Channel: ` + message.channel.name);
+		logger.debug(`Message: ` + message.content);
+		logger.debug(`Author: ` + message.author.username);
 	}
 	// Set prefix
-  let prefix = `!`
-  // Exit if bot or prefix not found or if message has multiple !: Do all non-commands above this line
-  if(!message.content.startsWith(prefix) || message.author.bot || message.content[1] == "!" || message.content.length == 1){
-    return
-  }
-  const args = message.content.slice(prefix.length).trim().split(/ +/g);
-  const command = args.shift().toLowerCase();
-  try{
-    logger.debug(`-----------------`);
-    logger.debug('Command Detected');
-    logger.debug(`Admin: ` + (userList[message.author.id] > global.ADMIN_LEVEL));
-    logger.debug(`Moderator: ` + (userList[message.author.id] > global.MOD_LEVEL));
-    logger.debug(`Args: ` + args);
-    logger.debug(`Command: ` + command);
-    logger.debug(`-----------------`);
-    //Deletes commands when sent
-    if(cleanMode && message.channel != `DMChannel`){
-      message.delete()
-      .then(msg => logger.info(`Deleted message from ${msg.author.username}`))
-      .catch(logger.error);
-    }
-  
-    //Admin Only tools
-    if (userList[message.author.id] >= global.ADMIN_LEVEL){
-      if (global.ADMIN_COMMANDS[command] != null){
-        global.ADMIN_COMMANDS[command](message, args);
-        return;
-      }
-    }
-  
-    //Moderator Only tools
-    if (userList[message.author.id] >= global.MOD_LEVEL){
-      if (global.MOD_COMMANDS[command] != null){
-        if(devMode){
-          message.channel.send(`Moderator speaking - everyone better listen up!`);
-        }
-        global.MOD_COMMANDS[command](message, args);
-        return;
-      }
-    }
-    
-    //Everybody tools
-    if (global.MEMBER_COMMANDS[command] != null){
-      var id_rx = /<@[&,!]?([0-9]+)>/g;
-      var id = id_rx.exec(message.content);
-      if(!id && !(message.content.includes("@everyone")) &&
-          !(message.content.includes("@here"))){
-        global.MEMBER_COMMANDS[command](message, args);
-      }
-      return;
-    }
-    message.channel.send(`${generator.message(`Command Not Found`,command)}`)
-  }
-  // For catching any uncaught errors
-  catch(err){
-    if(devMode){
-      message.channel.send(err.stack);
-    }
-    else{
-      err_msg = `AN ERROR OCCURED DURING "${command}" FROM ${message.author}
-      ${err.stack}`
-      logger.error(err_msg);
-      util.logToServer(err_msg);
-      message.channel.send(`An error occured processing the command "${command}"`);
-    }
-    
-  }
+	let prefix = `!`
+	// Exit if bot or prefix not found or if message has multiple !: Do all non-commands above this line
+	if(!message.content.startsWith(prefix) || message.author.bot || message.content[1] == "!" || message.content.length == 1){
+		return
+	}
+	const args = message.content.slice(prefix.length).trim().split(/ +/g);
+	const command = args.shift().toLowerCase();
+	try{
+		logger.debug(`-----------------`);
+		logger.debug('Command Detected');
+		logger.debug(`Admin: ` + (userList[message.author.id] > global.ADMIN_LEVEL));
+		logger.debug(`Moderator: ` + (userList[message.author.id] > global.MOD_LEVEL));
+		logger.debug(`Args: ` + args);
+		logger.debug(`Command: ` + command);
+		logger.debug(`-----------------`);
+		//Deletes commands when sent
+		if(cleanMode && message.channel != `DMChannel`){
+			message.delete()
+			.then(msg => logger.info(`Deleted message from ${msg.author.username}`))
+			.catch(logger.error);
+		}
+	
+		//Admin Only tools
+		if (userList[message.author.id] >= global.ADMIN_LEVEL){
+			if (global.ADMIN_COMMANDS[command] != null){
+				global.ADMIN_COMMANDS[command](message, args);
+				return;
+			}
+		}
+	
+		//Moderator Only tools
+		if (userList[message.author.id] >= global.MOD_LEVEL){
+			if (global.MOD_COMMANDS[command] != null){
+				if(devMode){
+					message.channel.send(`Moderator speaking - everyone better listen up!`);
+				}
+				global.MOD_COMMANDS[command](message, args);
+				return;
+			}
+		}
+		
+		//Everybody tools
+		if (global.MEMBER_COMMANDS[command] != null){
+			var id_rx = /<@[&,!]?([0-9]+)>/g;
+			var id = id_rx.exec(message.content);
+			if(!id && !(message.content.includes("@everyone")) &&
+					!(message.content.includes("@here"))){
+				global.MEMBER_COMMANDS[command](message, args);
+			}
+			return;
+		}
+		message.channel.send(`${generator.message(`Command Not Found`,command)}`)
+	}
+	// For catching any uncaught errors
+	catch(err){
+		if(devMode){
+			message.channel.send(err.stack);
+		}
+		else{
+			err_msg = `AN ERROR OCCURED DURING "${command}" FROM ${message.author}
+			${err.stack}`
+			logger.error(err_msg);
+			util.logToServer(err_msg);
+			message.channel.send(`An error occured processing the command "${command}"`);
+		}
+		
+	}
 
 });
 
@@ -175,20 +175,20 @@ client.on(`message`, (message) => {
  * Action: Log the metadata about the message, and the message itself
  */
  client.on(`messageDelete`, message => {
-  for(var i = 0; i < logBlackList.length; i++){
-    if(logBlackList[i]===message.channel.name){
-        return;
-    }
+	for(var i = 0; i < logBlackList.length; i++){
+		if(logBlackList[i]===message.channel.name){
+				return;
+		}
 }
-  attachments = message.attachments.array().length!=0 ? "Yes" : "No";
-  
-  util.logToServer(`The following message was deleted:
-    Id: ${message.id}
-    Author: ${message.author.username}
-    Content: "${message}"
-    Attachments: ${attachments}
-    Channel: ${message.channel}`
-    );
+	attachments = message.attachments.array().length!=0 ? "Yes" : "No";
+	
+	util.logToServer(`The following message was deleted:
+		Id: ${message.id}
+		Author: ${message.author.username}
+		Content: "${message}"
+		Attachments: ${attachments}
+		Channel: ${message.channel}`
+		);
  });
 
 /*
@@ -196,39 +196,39 @@ client.on(`message`, (message) => {
  * Action: log the metadata and content of the old and new message
  */
 client.on(`messageUpdate`, (oldMessage, newMessage) => {
-  if(oldMessage.content!=newMessage.content){
-    for(var i = 0; i < logBlackList.length; i++){
-      if(logBlackList[i]===oldMessage.channel.name){
-          return;
-      }
-  }
-    attachments = oldMessage.attachments.array().length!=0 ? "Yes" : "No";
-    util.logToServer(`The following message was updated:
-      Id: ${newMessage.id}
-      Author: ${oldMessage.author}
-      Channel: ${newMessage.channel}
-      Attachments: ${attachments}
-      Old Content: "${oldMessage.content}"
-      New Content: "${newMessage.content}"
-      `
-      );
-  }
+	if(oldMessage.content!=newMessage.content){
+		for(var i = 0; i < logBlackList.length; i++){
+			if(logBlackList[i]===oldMessage.channel.name){
+					return;
+			}
+	}
+		attachments = oldMessage.attachments.array().length!=0 ? "Yes" : "No";
+		util.logToServer(`The following message was updated:
+			Id: ${newMessage.id}
+			Author: ${oldMessage.author}
+			Channel: ${newMessage.channel}
+			Attachments: ${attachments}
+			Old Content: "${oldMessage.content}"
+			New Content: "${newMessage.content}"
+			`
+			);
+	}
 });
 /*
  * Entry Condition: A user connects to a server
  * Action: Sends a welcome message
  */
 client.on(`guildMemberAdd`,member=>{
-  util.logToServer(`A new user has joined! :)
-  User: ${member}
-  Id: ${member.id}`);
-  if(welcomeMessage){
-  logger.info("Sending welcome message");
-  member.send(" ", {files: [global.welcomeImage]}).catch(logger.error);
-  setTimeout(function(){
-    member.send(`Welcome to the Tespa Carleton Discord Server!\nPlease read the rules in <#${global.specialChannels['rules']}> and  then introduce yourself in <#${global.specialChannels['introductions']}> .\nIf you have any questions, do not hesitate to send a direct message to an Executive or Council member!`);
-    }, 1000);
-  }
+	util.logToServer(`A new user has joined! :)
+	User: ${member}
+	Id: ${member.id}`);
+	if(welcomeMessage){
+	logger.info("Sending welcome message");
+	member.send(" ", {files: [global.welcomeImage]}).catch(logger.error);
+	setTimeout(function(){
+		member.send(`Welcome to the Tespa Carleton Discord Server!\nPlease read the rules in <#${global.specialChannels['rules']}> and  then introduce yourself in <#${global.specialChannels['introductions']}> .\nIf you have any questions, do not hesitate to send a direct message to an Executive or Council member!`);
+		}, 1000);
+	}
 });
 
 /*
@@ -236,9 +236,9 @@ client.on(`guildMemberAdd`,member=>{
  * Action: Log the user leaving the server
  */
 client.on(`guildMemberRemove`, member=> {
-  util.logToServer(`A user has left... :(
-  User: ${member}
-  Id: ${member.id}`);
+	util.logToServer(`A user has left... :(
+	User: ${member}
+	Id: ${member.id}`);
 });
 
 /*
@@ -246,9 +246,9 @@ client.on(`guildMemberRemove`, member=> {
  * Action: Logs the error, and attempts to reconnect
  */
 client.on(`error`, e => { 
-  logger.error("Fatal DiscordJS error");
-  logger.error(e.stack);
-  logger.error(e);
+	logger.error("Fatal DiscordJS error");
+	logger.error(e.stack);
+	logger.error(e);
  });
 
 client.login(global.token);

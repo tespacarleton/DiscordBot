@@ -5,9 +5,9 @@ var connectionResets = 0;
 var db_config = {
 	host : process.env.SQL_HOST,
 	port : process.env.SQL_PORT,
-  user : process.env.SQL_USER,
-  password : process.env.SQL_PASS,
-  database : process.env.SQL_DATABASE
+	user : process.env.SQL_USER,
+	password : process.env.SQL_PASS,
+	database : process.env.SQL_DATABASE
 }
 var connection;
 /*
@@ -17,7 +17,7 @@ var connection;
 function handleDisconnect() {
 	connection = mysql.createConnection(db_config); // Recreate the connection, since
 													// the old one cannot be reused.
-  
+
 	connection.connect(function(err) {              // The server is either down
 	  if(err) {                                     // or restarting (takes a while sometimes).
 		logger.error('Error establishing connection... retrying', err);
@@ -29,7 +29,7 @@ function handleDisconnect() {
 	});                                     // process asynchronous requests in the meantime.
 											// If you're also serving http, display a 503 error.
 	connection.on('error', function(err) {
-	  connectionResets++;
+		connectionResets++;
 		if (connectionResets < 5) {				 //try to connect to the db again 5 times at most
 			handleDisconnect();	                      
 		} else {
@@ -37,7 +37,7 @@ function handleDisconnect() {
 			throw err;     
 		}
 	});
-  }
+}
 logger.info(`Connecting to database with parameters: ${JSON.stringify(db_config)}`);
 handleDisconnect();
 /*
@@ -140,7 +140,7 @@ exports.setSpecialChannel = function(role, id, name) {
 exports.removeSpecialChannel = function(role) {
 	return new Promise(function(resolve, reject) {
 		connection.query(`DELETE FROM special_channels WHERE role="${role}"`,
-		 function (error, results, fields) {
+		function (error, results, fields) {
 			if (error) return reject(error);
 			return resolve(results);
 		});
