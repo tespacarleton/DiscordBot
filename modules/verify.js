@@ -10,15 +10,20 @@ exports.verify = (msg, args) => {
 	let user = msg.author;
 	let userID = msg.author.id;
 
-	if (global.verifyCodes[userID] == args[0]) {
-		user.send("Sucessfully verified.");
-		delete global.verifyCodes[userID]
-		global.client.guilds.get("638809854647074816").members.get(userID).addRole("669217045908553739");
+	if (global.verifyCodes[userID]) {
+		if (global.verifyCodes[userID].code == args[0]) {
+			user.send("Sucessfully verified.");
+			// global.client.guilds.get("225297950568349706").members.get(userID).addRole("752277302532112394");
+			global.database.addVerifiedStudent(userID, msg.author.username, global.verifyCodes[userID].email);
+			delete global.verifyCodes[userID];
+		}
+		else user.send("Invalid code. Please make sure the code is correct and not expired.");
 	}
-	else user.send("Invalid code. Please make sure the code is correct and not expired.");
+	else user.send("Please type !register [email] first.");
 }
 
 exports.register = async (msg, args) => {
+	console.log("here")
 	if (msg.channel.type == 'text') {
 		msg.delete();
 		msg.reply("Please use this command in DMs.");
@@ -30,7 +35,10 @@ exports.register = async (msg, args) => {
 
 	let code = Math.floor(100000 + Math.random() * 900000);
 
-	global.verifyCodes[userID] = code;
+	global.verifyCodes[userID] = {
+		"code": code,
+		"email": args[0];
+	};
 
 	let transporter = nodemailer.createTransport({
 		service: 'gmail',
@@ -46,7 +54,7 @@ exports.register = async (msg, args) => {
 		subject: "Verification Code",
 		text: `
 		Your verification code is "${code}".
-		Reply to the bot with the verify command (.verify ${code}).
+		Reply to the bot with the verify command (!verify ${code}).
 		This code is only valid for the next 5 minutes.
 		`
 	});

@@ -207,4 +207,22 @@ exports.removeRole = function (roleName) {
     });
 }
 
+/*
+ * Entry Condition: Sucessfully Verified
+ * Action: Add a role to the database
+ * @param {string} userID - user ID to add
+ * @param {string} username - username to add
+ * @param {string} email - email to add
+ */
+exports.addVerifiedStudent = function (userID, username, email) {
+    return new Promise(function (resolve, reject) {
+        connection.query(`INSERT into VerifiedStudents (Discord_ID, Discord_Username, Student_Email) VALUES (${userID}, ${username}, ${email})
+		`,
+        function (error, results, fields) {
+            if (error) return reject(error);
+            return resolve(results);
+        });
+    });
+}
+
 exports.addLog = function(){};

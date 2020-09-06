@@ -40,8 +40,8 @@ global.generator = require(`./generator.js`);
 global.verifyCodes = {};
 
 //Flag
-global.devMode = true;
-global.enableDB = false;
+global.devMode = false;
+global.enableDB = true;
 global.cleanMode = false;
 global.welcomeMessage = false;
 
@@ -107,7 +107,7 @@ client.on(`message`, (message) => {
 		logger.debug(`Author: ` + message.author.username);
 	}
 	// Set prefix
-	let prefix = `.`
+	let prefix = `!`
 	// Exit if bot or prefix not found or if message has multiple !: Do all non-commands above this line
 	if(!message.content.startsWith(prefix) || message.author.bot || message.content[1] == "!" || message.content.length == 1){
 		return
