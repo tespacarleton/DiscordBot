@@ -13,12 +13,12 @@ exports.verify = (msg, args) => {
 	if (global.verifyCodes[userID] == args[0]) {
 		user.send("Sucessfully verified.");
 		delete global.verifyCodes[userID]
-		msg.guild.members.get(userID).addRole("725421359446097950");
+		global.client.guilds.get("638809854647074816").members.get(userID).addRole("669217045908553739");
 	}
 	else user.send("Invalid code. Please make sure the code is correct and not expired.");
 }
 
-exports.register = (msg, args) => {
+exports.register = async (msg, args) => {
 	if (msg.channel.type == 'text') {
 		msg.delete();
 		msg.reply("Please use this command in DMs.");
@@ -31,19 +31,17 @@ exports.register = (msg, args) => {
 	let code = Math.floor(100000 + Math.random() * 900000);
 
 	global.verifyCodes[userID] = code;
-	
+
 	let transporter = nodemailer.createTransport({
-		host: "mail.carleton.gg",
-		port: 25,
-		secure: false, // true for 465, false for other ports
+		service: 'gmail',
 		auth: {
-			user: "devtest@carleton.gg",
-			pass: "devtest"
-		},
-	});
+			user: 'tespacarletonverify@gmail.com',
+			pass: 'verify@2020'
+		}
+	})
 
 	const info = await transporter.sendMail({
-		from: '"TESPA Verify" <devtest@carleton.gg>',
+		from: '"TESPA Verify" <verify@carleton.gg>',
 		to: args[0],
 		subject: "Verification Code",
 		text: `
@@ -53,9 +51,11 @@ exports.register = (msg, args) => {
 		`
 	});
 
+	console.log(info)
+
 	user.send(`Email sent to **${args[0]}**.`)
 	
 	setTimeout(()=>{
-		delete global.verifyCodes[userID]
+		delete global.verifyCodes[userID];
 	}, 300000);
 }
