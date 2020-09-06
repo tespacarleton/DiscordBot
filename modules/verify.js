@@ -37,7 +37,7 @@ exports.register = async (msg, args) => {
 
 	global.verifyCodes[userID] = {
 		"code": code,
-		"email": args[0];
+		"email": args[0]
 	};
 
 	let transporter = nodemailer.createTransport({
