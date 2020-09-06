@@ -2,6 +2,7 @@
 //logger is the first thing declared so everyone can use it
 const { createLogger, format, transports } = require('winston');
 const { combine, timestamp, label, printf } = format;
+require('dotenv-flow').config();
 
 const myFormat = printf(info => {
 	return `[${info.timestamp}] ${info.level}: ${info.message}`;
@@ -88,7 +89,7 @@ client.on(`ready`, () => {
 client.on(`message`, (message) => {
 	//Full Log
 	if(devMode){
-			logger.debug(message);
+		logger.debug(message);
 	}else{
 		//Shorthand Log
 		if(message.channel != `DMChannel` && message.channel.guild){
@@ -100,7 +101,7 @@ client.on(`message`, (message) => {
 		logger.debug(`Author: ` + message.author.username);
 	}
 	// Set prefix
-	let prefix = `!`
+	let prefix = `.`
 	// Exit if bot or prefix not found or if message has multiple !: Do all non-commands above this line
 	if(!message.content.startsWith(prefix) || message.author.bot || message.content[1] == "!" || message.content.length == 1){
 		return
