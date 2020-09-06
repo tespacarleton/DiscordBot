@@ -26,13 +26,19 @@ global.Discord = require(`discord.js`);
 
 global.client = new Discord.Client();
 client = global.client;
+
 // The token of your bot - https://discordapp.com/developers/applications/me
 global.token = process.env.DISCORD_TOKEN;
 
 global.util = require('./util.js');
+
 //Local
 global.database = require(`./database.js`);
 global.generator = require(`./generator.js`);
+
+//Verification Codes
+global.verifyCodes = {};
+
 //Flag
 global.devMode = true;
 global.enableDB = false;
