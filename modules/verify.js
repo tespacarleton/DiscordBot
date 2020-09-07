@@ -23,7 +23,6 @@ exports.verify = (msg, args) => {
 }
 
 exports.register = async (msg, args) => {
-	console.log("here")
 	if (msg.channel.type == 'text') {
 		msg.delete();
 		msg.reply("Please use this command in DMs.");
@@ -33,37 +32,39 @@ exports.register = async (msg, args) => {
 	let user = msg.author;
 	let userID = msg.author.id;
 
-	let code = Math.floor(100000 + Math.random() * 900000);
-
-	global.verifyCodes[userID] = {
-		"code": code,
-		"email": args[0]
-	};
-
-	let transporter = nodemailer.createTransport({
-		service: 'gmail',
-		auth: {
-			user: process.env.EMAIL_USER,
-			pass: process.env.EMAIL_PASS
-		}
-	})
-
-	const info = await transporter.sendMail({
-		from: '"TESPA Verify" <verify@carleton.gg>',
-		to: args[0],
-		subject: "Verification Code",
-		text: `
-		Your verification code is "${code}".
-		Reply to the bot with the verify command (!verify ${code}).
-		This code is only valid for the next 5 minutes.
-		`
-	});
-
-	console.log(info)
-
-	user.send(`Email sent to **${args[0]}**.`)
+	if (args[0].endsWith("@cmail.carleton.ca")) {	
+		let code = Math.floor(100000 + Math.random() * 900000);
 	
-	setTimeout(()=>{
-		delete global.verifyCodes[userID];
-	}, 300000);
+		global.verifyCodes[userID] = {
+			"code": code,
+			"email": args[0]
+		};
+	
+		let transporter = nodemailer.createTransport({
+			service: 'gmail',
+			auth: {
+				user: process.env.EMAIL_USER,
+				pass: process.env.EMAIL_PASS
+			}
+		})
+	
+		const info = await transporter.sendMail({
+			from: '"TESPA Verify" <verify@carleton.gg>',
+			to: args[0],
+			subject: "Verification Code",
+			text: `
+			Your verification code is "${code}".
+			Reply to the bot with the verify command (!verify ${code}).
+			This code is only valid for the next 5 minutes.
+			`
+		});
+	
+		user.send(`Email sent to **${args[0]}**.`)
+		
+		setTimeout(()=>{
+			try { delete global.verifyCodes[userID]; }
+			catch (e) {}
+		}, 300000);
+	}
+	else user.send(`Please provide a valid cmail address (*email@cmail.carleton.ca*)`);
 }
