@@ -18,14 +18,14 @@ function handleDisconnect() {
 	connection = mysql.createConnection(db_config); // Recreate the connection, since
 													// the old one cannot be reused.
 
-	connection.connect(function(err) {              // The server is either down
-	  if(err) {                                     // or restarting (takes a while sometimes).
-		logger.error('Error establishing connection... retrying', err);
-		setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
-		}     
+	connection.connect(function(err) {              	// The server is either down
+		if(err) {                                    	// or restarting (takes a while sometimes).
+			logger.error('Error establishing connection... retrying', err);
+			setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
+		}
 		else{
 			connectionResets = 0;
-		}                                // to avoid a hot loop, and to allow our node script to
+		}                                	// to avoid a hot loop, and to allow our node script to
 	});                                     // process asynchronous requests in the meantime.
 											// If you're also serving http, display a 503 error.
 	connection.on('error', function(err) {
@@ -75,8 +75,7 @@ exports.getRoles = function() {
 };
 
 
-exports.updateRoles = function()
-{
+exports.updateRoles = function() {
     roleList = global.database.getRoles();
     roleList.then(function (result) {
         global.GAME_ROLES = result;
@@ -216,7 +215,7 @@ exports.removeRole = function (roleName) {
  */
 exports.addVerifiedStudent = function (userID, username, email) {
     return new Promise(function (resolve, reject) {
-        connection.query(`INSERT into VerifiedStudents (Discord_ID, Discord_Username, Student_Email) VALUES (${userID}, ${username}, ${email})
+        connection.query(`INSERT into VerifiedStudents (Discord_ID, Discord_Username, Student_Email) VALUES ('${userID}', '${username}', '${email}')
 		`,
         function (error, results, fields) {
             if (error) return reject(error);

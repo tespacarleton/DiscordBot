@@ -181,12 +181,12 @@ client.on(`message`, (message) => {
  * Entry Condition: DiscordJS recieves a "deleted message" signal
  * Action: Log the metadata about the message, and the message itself
  */
- client.on(`messageDelete`, message => {
+client.on(`messageDelete`, message => {
 	for(var i = 0; i < logBlackList.length; i++){
 		if(logBlackList[i]===message.channel.name){
 				return;
 		}
-}
+	}
 	attachments = message.attachments.array().length!=0 ? "Yes" : "No";
 	
 	util.logToServer(`The following message was deleted:
@@ -195,8 +195,8 @@ client.on(`message`, (message) => {
 		Content: "${message}"
 		Attachments: ${attachments}
 		Channel: ${message.channel}`
-		);
- });
+	);
+});
 
 /*
  * Entry Condition: DiscordJS recieves an "updated message" signal
