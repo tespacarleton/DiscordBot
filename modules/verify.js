@@ -13,7 +13,7 @@ exports.verify = (msg, args) => {
 	if (global.verifyCodes[userID]) {
 		if (global.verifyCodes[userID].code == args[0]) {
 			user.send("Sucessfully verified.");
-			// global.client.guilds.get("225297950568349706").members.get(userID).addRole("752277302532112394");
+			global.client.guilds.get("225297950568349706").members.get(userID).addRole("752277302532112394");
 			global.database.addVerifiedStudent(userID, msg.author.username, global.verifyCodes[userID].email);
 			delete global.verifyCodes[userID];
 		}
