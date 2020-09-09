@@ -49,10 +49,13 @@ exports.role = function(message, args){
 	}
 	role = message.guild.roles.find(`name`, role);
 	logger.info(`${message.author.username} attempting to join role ${role.name}`);
-	message.member.addRole(role);
+
+	let member = message.guild.members.find(member => member.id === message.author.id);
+
+	member.addRole(role);
 	//Hack for Smash
 	if(args[0] === `Smash4` || args[0] === `Melee`){
-		message.member.addRole(`Smash`);
+		member.addRole(`Smash`);
 	}
 
 	message.channel.send(`You've been added to: ${role.name}` );
@@ -80,8 +83,11 @@ exports.rmrole = function(message, args){
 	}
 	role = message.guild.roles.find(`name`, role);
 	logger.info(`User ${message.author.username} leaving role ${role.name}`);
+
+	let member = message.guild.members.find(member => member.id === message.author.id)
+
 	if (role){
-		message.member.removeRole(role).catch(logger.error);
+		member.removeRole(role).catch(logger.error);
 		message.channel.send(`You are no longer a member of: ${role.name}... \nSorry to see you go` );
 		return
 	}
