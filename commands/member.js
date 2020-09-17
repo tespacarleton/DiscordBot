@@ -1,3 +1,6 @@
+// Loading External Modules
+const verifyModule = require('../modules/verify');
+
 /*
  * Invocation Syntax: !avatar
  * Action: Gives a link to the users avatar
