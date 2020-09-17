@@ -1,3 +1,6 @@
+// Loading External Modules
+const verifyModule = require('../modules/verify');
+
 /*
  * Invocation Syntax: !avatar
  * Action: Gives a link to the users avatar
@@ -112,4 +115,26 @@ exports.who = function(message, args){
 exports.hello = function(message, args){
     message.reply(`${global.generator.message(`Greeting`)}`)
     return;
-}   
+}
+
+/*
+ * Invocation Syntax: !register
+ * Action: Request a code to Cmail to verify
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
+exports.register = function(message, args){
+	verifyModule.register(message, args);
+	return;
+}
+
+/*
+ * Invocation Syntax: !verify [code]
+ * Action: Verify user with code sent to Cmail
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
+exports.verify = function(message, args){
+	verifyModule.verify(message, args);
+	return;
+}
