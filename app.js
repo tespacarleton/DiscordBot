@@ -2,6 +2,7 @@
 //logger is the first thing declared so everyone can use it
 const { createLogger, format, transports } = require('winston');
 const { combine, timestamp, label, printf } = format;
+require('dotenv-flow').config();
 
 const myFormat = printf(info => {
   return `[${info.timestamp}] ${info.level}: ${info.message}`;
