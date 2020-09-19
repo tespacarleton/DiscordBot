@@ -216,12 +216,11 @@ exports.removeRole = function (roleName) {
  */
 exports.addVerifiedStudent = function (userID, username, email) {
     return new Promise(function (resolve, reject) {
-        connection.query(`INSERT into VerifiedStudents (Discord_ID, Discord_Username, Student_Email) VALUES ('${userID}', '${username}', '${email}')
-		`,
-        function (error, results, fields) {
-            if (error) return reject(error);
-            return resolve(results);
-        });
+        connection.query(`INSERT into VerifiedStudents (Discord_ID, Discord_Username, Student_Email) VALUES ('${userID}', '${username}', '${email}')`,
+			function (error, results, fields) {
+				if (error) return reject(error);
+				return resolve(results);
+			});
     });
 }
 
