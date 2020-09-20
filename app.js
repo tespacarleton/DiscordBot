@@ -2,6 +2,7 @@
 //logger is the first thing declared so everyone can use it
 const { createLogger, format, transports } = require('winston');
 const { combine, timestamp, label, printf } = format;
+require('dotenv-flow').config();
 
 const myFormat = printf(info => {
   return `[${info.timestamp}] ${info.level}: ${info.message}`;
@@ -29,9 +30,14 @@ client = global.client;
 global.token = process.env.DISCORD_TOKEN;
 
 global.util = require('./util.js');
+
 //Local
 global.database = require(`./database.js`);
 global.generator = require(`./generator.js`);
+
+//Verification Codes
+global.verifyCodes = {};
+
 //Flag
 global.devMode = false;
 global.enableDB = true;
