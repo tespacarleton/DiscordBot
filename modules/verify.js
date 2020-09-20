@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-exports.verify = (msg, args) => {
+exports.verify = async (msg, args) => {
     if (msg.channel.type == 'text') {
 		msg.delete();
 		msg.reply("Please use this command in DMs.");
@@ -12,9 +12,14 @@ exports.verify = (msg, args) => {
 
 	if (global.verifyCodes[userID]) {
 		if (global.verifyCodes[userID].code == args[0]) {
-			user.send("Sucessfully verified.");
-			global.client.guilds.get("225297950568349706").members.get(userID).addRole("752277302532112394");
-			global.database.addVerifiedStudent(userID, msg.author.username, global.verifyCodes[userID].email);
+			try {
+				await global.database.addVerifiedStudent(userID, msg.author.username, global.verifyCodes[userID].email);
+				global.client.guilds.get("225297950568349706").members.get(userID).addRole(process.env.VERIFIED_ROLE);
+				user.send("Sucessfully verified.");
+			}
+			catch (e) {
+				user.send(`An error has occured. Please contact <@&${process.env.DEV_ROLE}>.`);
+			}
 			delete global.verifyCodes[userID];
 		}
 		else user.send("Invalid code. Please make sure the code is correct and not expired.");
