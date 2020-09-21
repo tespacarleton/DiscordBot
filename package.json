@@ -20,6 +20,7 @@
   "dependencies": {
     "discord.js": "^11.5.1",
     "dotenv-flow": "^3.2.0",
+    "jsonexport": "^3.0.1",
     "mysql": "latest",
     "nodemailer": "^6.4.11",
     "winston": "^3.2.1"

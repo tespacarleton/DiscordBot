@@ -1,3 +1,6 @@
+// Loading External Modules
+const roleModule = require('../modules/RoleMembers');
+
 /*
  * Invocation Syntax: !channel [list|set|remove] [role] [id]
  * Actions: 
@@ -308,4 +311,27 @@ exports.rmrolelist = function (message, args) {
     global.database.removeRole(newargs);
     message.channel.send(`Removed ${newargs} from role list.`);
     return;
+}
+
+
+/*
+ * Invocation Syntax: !rolesize [role]
+ * Action: Rolesize
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
+exports.rolesize = function(message, args){
+    roleModule.size(message, args);
+	return;
+}
+
+/*
+ * Invocation Syntax: !rolemembers [role]
+ * Action: Rolemembers
+ * @param {DiscordJS Message} message - discord js message
+ * @param {string[]} args - args from command (pre split)
+ */
+exports.rolemembers = function(message, args){
+    roleModule.members(message, args);
+	return;
 }
