@@ -22,7 +22,8 @@ exports.members = (msg, args) => {
         role.members.forEach(m => {
             let pushing = {
                 "ID": `${m.id}`,
-                "Username": m.displayName
+                "Username": m.displayName,
+                "UserTag": m.user.tag
             }
             rMembers.push(pushing);
         });
@@ -36,7 +37,6 @@ exports.members = (msg, args) => {
                         "./roleList.csv"
                     ]
                 });
-                console.log('Saved!');
             });
         });
     }
@@ -55,6 +55,7 @@ exports.members = (msg, args) => {
             let pushing = {
                 "ID": `${m.id}`,
                 "Username": m.displayName,
+                "UserTag": m.user.tag,
                 "Roles": roles
             }
             rMembers.push(pushing);
@@ -69,7 +70,6 @@ exports.members = (msg, args) => {
                         "./roleList.csv"
                     ]
                 });
-                console.log('Saved!');
             });
         });
     }
