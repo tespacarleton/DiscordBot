@@ -22,14 +22,13 @@ exports.members = (msg, args) => {
         role.members.forEach(m => {
             let pushing = {
                 "ID": `${m.id}`,
-                "Username": m.user.tag
+                "Username": m.displayName
             }
             rMembers.push(pushing);
         });
     
         jsonexport(rMembers, function(err, csv){
             if (err) return console.error(err);
-            // msg.channel.send(csv);
             fs.writeFile('./roleList.csv', csv, function (err) {
                 if (err) throw err;
                 msg.channel.send("Here is the list of members.", {
@@ -55,7 +54,7 @@ exports.members = (msg, args) => {
             
             let pushing = {
                 "ID": `${m.id}`,
-                "Username": m.user.tag,
+                "Username": m.displayName,
                 "Roles": roles
             }
             rMembers.push(pushing);
@@ -63,7 +62,6 @@ exports.members = (msg, args) => {
 
         jsonexport(rMembers, function(err, csv){
             if (err) return console.error(err);
-            // msg.channel.send(csv);
             fs.writeFile('./roleList.csv', csv, function (err) {
                 if (err) throw err;
                 msg.channel.send("Here is the list of members.", {
