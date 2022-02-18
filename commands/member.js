@@ -1,6 +1,15 @@
 // Loading External Modules
 const verifyModule = require('../modules/verify');
 
+const roleHacks = {
+    "vr-halo" : "Victory Road - Halo",
+    "vr-gg" : "Victory Road - GG",
+    "vr-val" : "Victory Road - Valorant",
+    "vr-dbfz" : "Victory Road - DBFZ",
+    "Smash4" : "Smash",
+    "Melee" : "Smash"
+}
+
 /*
  * Invocation Syntax: !avatar
  * Action: Gives a link to the users avatar
@@ -45,13 +54,13 @@ exports.role = function(message, args){
         message.channel.send(`Doesn't look like you're allowed to join ${args.join(' ')}, or it doesn't exist!\nFor a full list of joinable roles use \`!role --help\` \nUse \`!role <role_name>\` to join a role \nUse \`!rmrole <role_name>\` to leave a role`)
         return;
     }
+
+    // If the role name isn't the same as the command, hack it in here.
+    if (Object.keys(roleHacks).includes(role)) role = roleHacks[role];
+
     role = message.guild.roles.find(`name`, role);
     logger.info(`${message.author.username} attempting to join role ${role.name}`);
     message.member.addRole(role);
-    //Hack for Smash
-    if(args[0] === `Smash4` || args[0] === `Melee`){
-        message.member.addRole(`Smash`);
-    }
 
     message.channel.send(`You've been added to: ${role.name}` );
     return
