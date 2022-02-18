@@ -6,7 +6,7 @@ const roleHacks = {
     "vr-gg" : "Victory Road - GG",
     "vr-val" : "Victory Road - Valorant",
     "vr-dbfz" : "Victory Road - DBFZ",
-    "Smash4" : "Smash",
+    "Smash Ultimate" : "Smash",
     "Melee" : "Smash"
 }
 
